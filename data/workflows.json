@@ -1,0 +1,244 @@
+{
+    "version": "2026.01",
+    "generated_at": "2026-01-15",
+    "workflows": [
+        {
+            "workflow_id": "refund",
+            "workflow_name": "返品・返金対応",
+            "description": "商品の返品受付から返金完了までの対応手順",
+            "keywords": [
+                "返品",
+                "返金",
+                "返送",
+                "キャンセル返品",
+                "返却",
+                "返品したい",
+                "返したい",
+                "お返し"
+            ],
+            "required_slots": [
+                "商品名",
+                "購入日",
+                "注文番号",
+                "チャネル"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "risk_level": "Med",
+            "escalation_to": "SV",
+            "version": "3",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "cancel",
+            "workflow_name": "解約・契約解除対応",
+            "description": "契約の解約受付から完了通知までの手順",
+            "keywords": [
+                "解約",
+                "契約解除",
+                "退会",
+                "キャンセル",
+                "やめたい",
+                "辞める",
+                "停止",
+                "止めたい"
+            ],
+            "required_slots": [
+                "会員番号",
+                "契約種別",
+                "解約希望日",
+                "チャネル"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット"
+            ],
+            "risk_level": "High",
+            "escalation_to": "SV",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "address_change",
+            "workflow_name": "住所変更対応",
+            "description": "会員登録住所の変更手続き",
+            "keywords": [
+                "住所変更",
+                "引っ越し",
+                "引越し",
+                "転居",
+                "住所",
+                "変更",
+                "アドレス変更"
+            ],
+            "required_slots": [
+                "会員番号",
+                "旧住所",
+                "新住所"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "risk_level": "Low",
+            "escalation_to": "業務窓口",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "payment",
+            "workflow_name": "請求・支払い対応",
+            "description": "請求内容の確認・支払い方法変更・未払い対応",
+            "keywords": [
+                "請求",
+                "支払い",
+                "料金",
+                "引き落とし",
+                "未払い",
+                "請求書",
+                "クレジット",
+                "振込",
+                "決済"
+            ],
+            "required_slots": [
+                "会員番号",
+                "対象月",
+                "金額"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット"
+            ],
+            "risk_level": "High",
+            "escalation_to": "SV",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "product_inquiry",
+            "workflow_name": "商品問い合わせ対応",
+            "description": "商品仕様・在庫・価格・使い方に関する問い合わせ対応",
+            "keywords": [
+                "商品",
+                "製品",
+                "仕様",
+                "在庫",
+                "価格",
+                "値段",
+                "使い方",
+                "使用方法",
+                "説明",
+                "詳細"
+            ],
+            "required_slots": [
+                "商品名"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "risk_level": "Low",
+            "escalation_to": "業務窓口",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "system_operation",
+            "workflow_name": "システム操作サポート",
+            "description": "会員サイト・アプリのログイン・操作方法に関するサポート",
+            "keywords": [
+                "ログイン",
+                "パスワード",
+                "アカウント",
+                "会員サイト",
+                "アプリ",
+                "操作",
+                "エラー",
+                "不具合",
+                "使えない"
+            ],
+            "required_slots": [
+                "会員番号",
+                "利用端末",
+                "エラー内容"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット"
+            ],
+            "risk_level": "Low",
+            "escalation_to": "システム部門",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "complaint",
+            "workflow_name": "クレーム・苦情対応",
+            "description": "商品不良・サービス品質に関するクレーム受付と初期対応",
+            "keywords": [
+                "クレーム",
+                "苦情",
+                "不満",
+                "怒り",
+                "ひどい",
+                "最悪",
+                "問題",
+                "欠陥",
+                "不良",
+                "壊れ"
+            ],
+            "required_slots": [
+                "商品名",
+                "発生日",
+                "状況詳細"
+            ],
+            "allowed_channels": [
+                "電話"
+            ],
+            "risk_level": "High",
+            "escalation_to": "SV",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        },
+        {
+            "workflow_id": "exchange",
+            "workflow_name": "交換・修理対応",
+            "description": "商品の交換・修理受付から完了までの手順",
+            "keywords": [
+                "交換",
+                "修理",
+                "取り替え",
+                "換えて",
+                "直して",
+                "壊れた",
+                "故障"
+            ],
+            "required_slots": [
+                "商品名",
+                "購入日",
+                "不具合内容"
+            ],
+            "allowed_channels": [
+                "電話",
+                "チャット"
+            ],
+            "risk_level": "Med",
+            "escalation_to": "業務窓口",
+            "version": "2",
+            "effective_from": "2026-01-01",
+            "effective_until": null
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "version": "2026.01",
+    "generated_at": "2026-01-15",
+    "catalog": [
+        {
+            "data_id": "DS-001",
+            "data_name": "社内FAQ",
+            "format": "JSON",
+            "file": "data/faq.json",
+            "location": "ローカル（静的配布）",
+            "update_frequency": "随時",
+            "owner": "管理者",
+            "last_updated": "2026-01-15",
+            "last_updated_by": "admin",
+            "is_primary": true,
+            "confidentiality": "一般・社内限（レコード別）",
+            "description": "コールセンター向けFAQデータ。商品・返品・契約・請求・システム操作等を網羅。"
+        },
+        {
+            "data_id": "DS-002",
+            "data_name": "業務マニュアル",
+            "format": "JSON",
+            "file": "data/manuals.json",
+            "location": "ローカル（静的配布）",
+            "update_frequency": "四半期",
+            "owner": "業務推進部",
+            "last_updated": "2026-01-15",
+            "last_updated_by": "admin",
+            "is_primary": true,
+            "confidentiality": "社内限",
+            "description": "詳細対応手順・トークスクリプト・エスカレーション基準を含む業務マニュアル。"
+        },
+        {
+            "data_id": "DS-003",
+            "data_name": "業務マスタ",
+            "format": "JSON",
+            "file": "data/workflows.json",
+            "location": "ローカル（静的配布）",
+            "update_frequency": "随時",
+            "owner": "管理者",
+            "last_updated": "2026-01-15",
+            "last_updated_by": "admin",
+            "is_primary": true,
+            "confidentiality": "社内限",
+            "description": "業務種別（返品・解約・住所変更等）のマスタデータ。キーワード・必須スロット・リスクレベルを管理。"
+        }
+    ]
+}

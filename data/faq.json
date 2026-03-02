@@ -1,0 +1,856 @@
+{
+    "version": "2026.01",
+    "generated_at": "2026-01-15",
+    "records": [
+        {
+            "id": "FAQ-001",
+            "title": "返品可能期間について",
+            "question": "商品の返品はいつまでできますか？",
+            "answer": "お買い上げ日から30日以内であれば返品を承ります。ただし、開封済み・使用済みの場合は対象外となります。返品の際は注文番号と商品をご用意ください。",
+            "category": "返品・交換",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "3",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.23",
+            "confidentiality": "一般",
+            "tags": [
+                "返品",
+                "期間",
+                "購入日"
+            ],
+            "required_info": [
+                "商品名",
+                "購入日"
+            ],
+            "workflow_ids": [
+                "refund"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 1,
+            "conflict_group": "refund_period_2026"
+        },
+        {
+            "id": "FAQ-002",
+            "title": "返品手続きの流れ",
+            "question": "返品の手続き方法を教えてください",
+            "answer": "返品手続きは以下の手順で行います。\n1. 注文番号・商品名をご確認ください\n2. お電話またはチャットで返品申請をご連絡ください\n3. 返品受付番号をお伝えします\n4. 商品を指定の宛先に着払いでお送りください\n5. 到着確認後、7営業日以内にご返金いたします",
+            "category": "返品・交換",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.24-25",
+            "confidentiality": "一般",
+            "tags": [
+                "返品",
+                "手続き",
+                "手順",
+                "着払い"
+            ],
+            "required_info": [
+                "注文番号",
+                "商品名"
+            ],
+            "workflow_ids": [
+                "refund"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 2,
+            "conflict_group": "refund_process_2026"
+        },
+        {
+            "id": "FAQ-003",
+            "title": "返品不可商品について",
+            "question": "返品できない商品はありますか？",
+            "answer": "以下の商品は返品をお受けできません。\n・食品・飲料（開封有無に関わらず）\n・下着・肌着類\n・カスタマイズ商品（名入れ・刻印等）\n・デジタルコンテンツ（ダウンロード済み）\n・セール・アウトレット商品（商品ページに記載あり）",
+            "category": "返品・交換",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "3",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.26",
+            "confidentiality": "一般",
+            "tags": [
+                "返品",
+                "対象外",
+                "不可",
+                "例外"
+            ],
+            "required_info": [
+                "商品名"
+            ],
+            "workflow_ids": [
+                "refund",
+                "exchange"
+            ],
+            "step_phase": "exceptions",
+            "priority_in_workflow": 2,
+            "conflict_group": "refund_exclusion_2026"
+        },
+        {
+            "id": "FAQ-004",
+            "title": "返金方法と所要日数",
+            "question": "返金はどのくらいで、どのような方法でされますか？",
+            "answer": "返金方法はご購入時の決済方法に準じます。\n・クレジットカード：商品到着確認後7営業日以内に取消処理。反映はカード会社により異なります（通常1〜2サイクル）\n・銀行振込：商品到着確認後7営業日以内に指定口座へ振込\n・コンビニ払い：銀行振込での返金となります（口座情報が必要）",
+            "category": "返品・交換",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.27",
+            "confidentiality": "一般",
+            "tags": [
+                "返金",
+                "返金方法",
+                "クレジット",
+                "振込",
+                "日数"
+            ],
+            "required_info": [
+                "決済方法"
+            ],
+            "workflow_ids": [
+                "refund"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 3,
+            "conflict_group": "refund_method_2026"
+        },
+        {
+            "id": "FAQ-005",
+            "title": "解約の申し込み方法",
+            "question": "契約を解約したいのですが、どうすれば良いですか？",
+            "answer": "解約のお申し込みはお電話またはチャットにて承ります。\n1. 会員番号をご用意ください\n2. 契約種別（月額/年額）をご確認ください\n3. 解約希望日をお伝えください（月末締め・翌月適用）\n4. 解約受付番号を発行いたします\n5. 解約完了メールを登録アドレスに送信いたします\n※年額契約の中途解約はご返金対象外となります",
+            "category": "解約・契約",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "3",
+            "source_file": "業務マニュアル第7章",
+            "source_page": "p.45",
+            "confidentiality": "一般",
+            "tags": [
+                "解約",
+                "手続き",
+                "申し込み",
+                "退会"
+            ],
+            "required_info": [
+                "会員番号",
+                "契約種別",
+                "解約希望日"
+            ],
+            "workflow_ids": [
+                "cancel"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 1,
+            "conflict_group": "cancel_process_2026"
+        },
+        {
+            "id": "FAQ-006",
+            "title": "解約後のデータ・アカウントの扱い",
+            "question": "解約すると過去のデータやアカウントはどうなりますか？",
+            "answer": "解約後の取り扱いは以下の通りです。\n・アカウントは解約日から30日後に削除されます\n・購入履歴・ポイント履歴は解約日から30日間は閲覧可能です\n・未使用ポイントは解約と同時に失効します\n・30日以内に再入会いただくとデータの一部を復元できます",
+            "category": "解約・契約",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第7章",
+            "source_page": "p.48",
+            "confidentiality": "一般",
+            "tags": [
+                "解約",
+                "アカウント",
+                "データ",
+                "ポイント",
+                "削除"
+            ],
+            "required_info": [],
+            "workflow_ids": [
+                "cancel"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 2,
+            "conflict_group": "cancel_aftercare_2026"
+        },
+        {
+            "id": "FAQ-007",
+            "title": "住所変更の手続き方法",
+            "question": "登録している住所を変更したいのですが",
+            "answer": "住所変更のお手続きは以下の方法で行えます。\n【会員サイトから変更する場合】\n1. 会員サイトにログイン\n2. 「マイページ」→「会員情報変更」を選択\n3. 新住所を入力し「変更する」をクリック\n【電話・チャットの場合】\n1. 会員番号をご用意ください\n2. 本人確認（生年月日・登録メールアドレス）\n3. 新しい住所をお伝えください",
+            "category": "会員情報変更",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第3章",
+            "source_page": "p.15",
+            "confidentiality": "一般",
+            "tags": [
+                "住所",
+                "変更",
+                "会員情報",
+                "マイページ"
+            ],
+            "required_info": [
+                "会員番号",
+                "新住所"
+            ],
+            "workflow_ids": [
+                "address_change"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 1,
+            "conflict_group": "address_change_2026"
+        },
+        {
+            "id": "FAQ-008",
+            "title": "請求金額の確認方法",
+            "question": "今月の請求金額を確認したい",
+            "answer": "請求金額は以下の方法でご確認いただけます。\n1. 会員サイト「マイページ」→「請求・支払い履歴」から確認\n2. 毎月5日前後に登録メールアドレスに請求明細を送付\n3. お電話・チャットでのご確認（会員番号が必要です）\n※引き落とし日は毎月27日です（金融機関休業日の場合は翌営業日）",
+            "category": "請求・支払い",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第8章",
+            "source_page": "p.55",
+            "confidentiality": "一般",
+            "tags": [
+                "請求",
+                "金額",
+                "確認",
+                "引き落とし",
+                "明細"
+            ],
+            "required_info": [
+                "会員番号"
+            ],
+            "workflow_ids": [
+                "payment"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 1,
+            "conflict_group": "payment_check_2026"
+        },
+        {
+            "id": "FAQ-009",
+            "title": "支払い方法の変更",
+            "question": "支払い方法をクレジットカードから振込に変更したい",
+            "answer": "支払い方法の変更は当月末日の3営業日前までに申請が必要です。\n変更可能な支払い方法：\n・クレジットカード（VISA / MasterCard / JCB / AMEX）\n・銀行振込（毎月25日までに振込）\n・コンビニ払い（毎月20日に払込票をメール送付）\n変更は会員サイトまたはお電話で承ります。当月分はすでに確定している場合は翌月から適用となります。",
+            "category": "請求・支払い",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第8章",
+            "source_page": "p.58",
+            "confidentiality": "一般",
+            "tags": [
+                "支払い",
+                "変更",
+                "クレジット",
+                "振込",
+                "コンビニ"
+            ],
+            "required_info": [
+                "会員番号",
+                "変更後の支払い方法"
+            ],
+            "workflow_ids": [
+                "payment"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 2,
+            "conflict_group": "payment_method_2026"
+        },
+        {
+            "id": "FAQ-010",
+            "title": "ログインできない場合の対応",
+            "question": "会員サイトにログインできません",
+            "answer": "ログインできない場合は以下をご確認ください。\n1. メールアドレスとパスワードが正しいか確認\n2. パスワードは大文字/小文字を区別します\n3. パスワードを忘れた場合は「パスワードを忘れた方はこちら」から再設定\n4. メールが届かない場合は迷惑メールフォルダをご確認ください\n5. 上記で解決しない場合はお電話にてサポートいたします（会員番号が必要）",
+            "category": "システム操作",
+            "product": "会員サイト",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "システム操作マニュアル第2章",
+            "source_page": "p.8",
+            "confidentiality": "一般",
+            "tags": [
+                "ログイン",
+                "パスワード",
+                "会員サイト",
+                "サポート"
+            ],
+            "required_info": [
+                "会員番号",
+                "利用端末"
+            ],
+            "workflow_ids": [
+                "system_operation"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 1,
+            "conflict_group": "login_support_2026"
+        },
+        {
+            "id": "FAQ-011",
+            "title": "パスワード再設定の手順",
+            "question": "パスワードを忘れてしまいました。再設定方法を教えてください",
+            "answer": "パスワード再設定の手順は以下の通りです。\n1. 会員サイトのログイン画面で「パスワードを忘れた方」をクリック\n2. 登録メールアドレスを入力して送信\n3. 届いたメールのリンクをクリック（有効期限：24時間）\n4. 新しいパスワードを2回入力して確定\n※リンクが届かない場合は迷惑メールフォルダをご確認ください\n※24時間経過した場合は再度手順を最初から行ってください",
+            "category": "システム操作",
+            "product": "会員サイト",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "システム操作マニュアル第2章",
+            "source_page": "p.10",
+            "confidentiality": "一般",
+            "tags": [
+                "パスワード",
+                "再設定",
+                "忘れた",
+                "メール"
+            ],
+            "required_info": [
+                "登録メールアドレス"
+            ],
+            "workflow_ids": [
+                "system_operation"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 2,
+            "conflict_group": "password_reset_2026"
+        },
+        {
+            "id": "FAQ-012",
+            "title": "商品の使い方・取扱説明",
+            "question": "商品の使い方を教えてください",
+            "answer": "商品のご使用方法は以下でご確認いただけます。\n1. 同梱の取扱説明書をご参照ください\n2. 商品ページの「使い方・FAQ」タブをご確認ください\n3. 動画マニュアルは会員サイト「サポートコンテンツ」内にございます\n具体的な操作方法についてはお電話・チャットでもご案内可能です（商品名・型番をご用意ください）",
+            "category": "商品",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第2章",
+            "source_page": "p.12",
+            "confidentiality": "一般",
+            "tags": [
+                "商品",
+                "使い方",
+                "説明書",
+                "マニュアル"
+            ],
+            "required_info": [
+                "商品名"
+            ],
+            "workflow_ids": [
+                "product_inquiry"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 1,
+            "conflict_group": "product_howto_2026"
+        },
+        {
+            "id": "FAQ-013",
+            "title": "在庫確認の方法",
+            "question": "商品の在庫はありますか？",
+            "answer": "在庫状況は商品ページにリアルタイムで反映されています。\n・「在庫あり」：当日発送可能\n・「残りわずか」：在庫僅少。早めのご注文をお勧めします\n・「在庫なし」：現在ご注文いただけません\n※入荷予定がある場合は商品ページ下部に「入荷お知らせ登録」が表示されます\n個別の在庫数はお伝えできません（社内規定）",
+            "category": "商品",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第2章",
+            "source_page": "p.14",
+            "confidentiality": "一般",
+            "tags": [
+                "在庫",
+                "商品",
+                "入荷",
+                "確認"
+            ],
+            "required_info": [
+                "商品名"
+            ],
+            "workflow_ids": [
+                "product_inquiry"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 2,
+            "conflict_group": "stock_check_2026"
+        },
+        {
+            "id": "FAQ-014",
+            "title": "クレーム受付の基本対応",
+            "question": "商品に問題があります。クレームを受け付けてほしい",
+            "answer": "ご不便をおかけして大変申し訳ございません。\n初期対応手順：\n1. まずお詫びを申し上げてください\n2. 状況の詳細をヒアリング（商品名・発生日・状況）\n3. 写真等の証拠提出をお願いする\n4. クレーム受付番号を発行\n5. SVへ即時エスカレーション（High案件）\n※金額補償・特別対応の確約はオペレーターは行えません。必ずSVに引き継いでください",
+            "category": "クレーム",
+            "product": "全商品",
+            "channel": [
+                "電話"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "3",
+            "source_file": "クレーム対応マニュアル第1章",
+            "source_page": "p.3",
+            "confidentiality": "社内限",
+            "tags": [
+                "クレーム",
+                "苦情",
+                "初期対応",
+                "エスカレーション"
+            ],
+            "required_info": [
+                "商品名",
+                "発生日",
+                "状況"
+            ],
+            "workflow_ids": [
+                "complaint"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 1,
+            "conflict_group": "complaint_process_2026"
+        },
+        {
+            "id": "FAQ-015",
+            "title": "商品交換の手続き",
+            "question": "商品を交換したいのですが",
+            "answer": "商品交換の手続きは以下の通りです。\n1. 注文番号・商品名・不具合内容をご確認ください\n2. 交換申請をお電話またはチャットで受付\n3. 交換品の在庫確認（在庫なしの場合は返品・返金をご案内）\n4. 交換品を発送（2〜5営業日）\n5. 不良品は着払いで返送いただきます\n※交換受付は購入日から90日以内、初期不良の場合は購入日から7日以内にご連絡ください",
+            "category": "返品・交換",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.30",
+            "confidentiality": "一般",
+            "tags": [
+                "交換",
+                "手続き",
+                "不良品",
+                "初期不良"
+            ],
+            "required_info": [
+                "注文番号",
+                "商品名",
+                "不具合内容"
+            ],
+            "workflow_ids": [
+                "exchange",
+                "refund"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 1,
+            "conflict_group": "exchange_process_2026"
+        },
+        {
+            "id": "FAQ-016",
+            "title": "ポイントの有効期限",
+            "question": "ポイントの有効期限はいつですか？",
+            "answer": "ポイントの有効期限は最終ご利用日（購入・ポイント使用）から1年間です。\n・1年間ご利用がない場合、ポイントは失効します\n・有効期限はマイページ「ポイント履歴」でご確認いただけます\n・解約時の未使用ポイントは即時失効となります（返金不可）",
+            "category": "ポイント",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "会員規約第6条",
+            "source_page": "p.8",
+            "confidentiality": "一般",
+            "tags": [
+                "ポイント",
+                "有効期限",
+                "失効"
+            ],
+            "required_info": [],
+            "workflow_ids": [
+                "cancel",
+                "product_inquiry"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 3,
+            "conflict_group": "point_expiry_2026"
+        },
+        {
+            "id": "FAQ-017",
+            "title": "配送日数の目安",
+            "question": "注文から何日で届きますか？",
+            "answer": "通常配送の目安：\n・関東・関西エリア：1〜2営業日\n・その他エリア：2〜4営業日\n・北海道・沖縄・離島：3〜5営業日\n※土日祝日・ゴールデンウィーク・年末年始は日数が追加されます\n※在庫状況により異なる場合があります\n発送完了時にメールでトラッキング番号をお知らせします",
+            "category": "配送",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第4章",
+            "source_page": "p.20",
+            "confidentiality": "一般",
+            "tags": [
+                "配送",
+                "日数",
+                "届く",
+                "いつ"
+            ],
+            "required_info": [
+                "お届け先住所"
+            ],
+            "workflow_ids": [
+                "product_inquiry"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 3,
+            "conflict_group": "delivery_days_2026"
+        },
+        {
+            "id": "FAQ-018",
+            "title": "年額契約の途中解約について",
+            "question": "年額契約を途中で解約した場合、返金はありますか？",
+            "answer": "年額契約を途中解約された場合、残余期間の返金はおこなっておりません。\n解約は受け付けますが、次回更新日まではサービスをご利用いただけます。\n【重要】この判断について例外や個別対応の確約は行えません。詳細はSVにエスカレーションしてください。",
+            "category": "解約・契約",
+            "product": "年額プラン",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "3",
+            "source_file": "業務マニュアル第7章",
+            "source_page": "p.50",
+            "confidentiality": "一般",
+            "tags": [
+                "解約",
+                "年額",
+                "返金",
+                "途中解約"
+            ],
+            "required_info": [
+                "会員番号",
+                "契約種別"
+            ],
+            "workflow_ids": [
+                "cancel",
+                "payment"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 2,
+            "conflict_group": "annual_cancel_2026"
+        },
+        {
+            "id": "FAQ-019",
+            "title": "本人確認の方法",
+            "question": "本人確認はどのようにしますか？",
+            "answer": "電話・チャットでの本人確認手順：\n1. 会員番号（必須）\n2. 登録メールアドレス または 生年月日\n3. 上記2点で確認完了\n※個人情報（住所・クレジットカード番号等）は口頭でお伝えしないようお願いしています",
+            "category": "会員情報",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第1章",
+            "source_page": "p.5",
+            "confidentiality": "社内限",
+            "tags": [
+                "本人確認",
+                "セキュリティ",
+                "会員番号"
+            ],
+            "required_info": [
+                "会員番号"
+            ],
+            "workflow_ids": [
+                "address_change",
+                "payment",
+                "cancel"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 1,
+            "conflict_group": "identity_verification_2026"
+        },
+        {
+            "id": "FAQ-020",
+            "title": "キャンペーンの適用条件（2026年春）",
+            "question": "春のキャンペーンはどんな内容ですか？",
+            "answer": "【2026年春キャンペーン】期間：2026年3月1日〜3月31日\n・対象：全会員（新規・既存）\n・内容：対象商品10%OFF + ポイント3倍\n・対象商品：家電・日用品カテゴリ（食品は対象外）\n・クーポンコード不要（自動適用）\n・他のクーポンとの併用不可",
+            "category": "キャンペーン",
+            "product": "家電・日用品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-03-01",
+            "valid_until": "2026-03-31",
+            "version": "1",
+            "source_file": "キャンペーン一覧2026春",
+            "source_page": "p.1",
+            "confidentiality": "一般",
+            "tags": [
+                "キャンペーン",
+                "割引",
+                "ポイント",
+                "春"
+            ],
+            "required_info": [],
+            "workflow_ids": [
+                "product_inquiry"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 3,
+            "conflict_group": "campaign_spring_2026"
+        },
+        {
+            "id": "FAQ-021",
+            "title": "禁止事項：法務判断・例外対応の確約",
+            "question": "今回だけ特別に対応してもらえますか？",
+            "answer": "【回答禁止領域】個別の例外対応の確約・法務判断・契約条件の変更は、オペレーターでは対応できません。\nSVまたは業務窓口へエスカレーションしてください。",
+            "category": "禁止対応",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第1章",
+            "source_page": "p.3",
+            "confidentiality": "社内限",
+            "tags": [
+                "禁止",
+                "例外",
+                "確約",
+                "法務"
+            ],
+            "required_info": [],
+            "workflow_ids": [
+                "complaint",
+                "cancel",
+                "refund"
+            ],
+            "step_phase": "exceptions",
+            "priority_in_workflow": 1,
+            "conflict_group": "prohibited_2026"
+        },
+        {
+            "id": "FAQ-022",
+            "title": "メールアドレス変更の手続き",
+            "question": "登録しているメールアドレスを変更したい",
+            "answer": "メールアドレスの変更手順（会員サイト）：\n1. マイページ →「会員情報変更」\n2.「メールアドレス」の「変更」をクリック\n3. 新しいメールアドレスを入力\n4. 確認メールが新アドレスに届く\n5. メール内のリンクをクリックして変更完了\n※変更完了まで旧アドレスは有効です\n電話でのご変更は本人確認後に承ります",
+            "category": "会員情報変更",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第3章",
+            "source_page": "p.17",
+            "confidentiality": "一般",
+            "tags": [
+                "メール",
+                "変更",
+                "会員情報",
+                "アドレス"
+            ],
+            "required_info": [
+                "会員番号",
+                "新しいメールアドレス"
+            ],
+            "workflow_ids": [
+                "address_change"
+            ],
+            "step_phase": "steps",
+            "priority_in_workflow": 2,
+            "conflict_group": "email_change_2026"
+        },
+        {
+            "id": "FAQ-023",
+            "title": "返品・解約の複合対応",
+            "question": "商品を返品して、同時に契約も解約したいです",
+            "answer": "返品と解約を同時にお申し出の場合、それぞれ個別に手続きが必要です。\n【返品】お買い上げ30日以内、注文番号と商品名が必要\n【解約】月末締め・翌月適用。会員番号と契約種別が必要\n両方同時に進める場合は、先に解約手続きを完了後、返品を受付することを推奨します（解約後30日以内は返品申請可能）",
+            "category": "複合対応",
+            "product": "全サービス",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第9章",
+            "source_page": "p.70",
+            "confidentiality": "一般",
+            "tags": [
+                "返品",
+                "解約",
+                "複合",
+                "同時"
+            ],
+            "required_info": [
+                "注文番号",
+                "会員番号",
+                "商品名",
+                "契約種別"
+            ],
+            "workflow_ids": [
+                "refund",
+                "cancel"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 1,
+            "conflict_group": "refund_cancel_combined"
+        },
+        {
+            "id": "FAQ-024",
+            "title": "送料について",
+            "question": "送料はいくらですか？",
+            "answer": "【送料のご案内】\n・通常配送：330円（税込）\n・5,000円以上のお買い上げで送料無料\n・速達配送：660円（税込）\n・離島・一部地域：別途追加料金 \n※会員ランクGOLD以上は常時送料無料",
+            "category": "配送",
+            "product": "全商品",
+            "channel": [
+                "電話",
+                "チャット",
+                "メール"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第4章",
+            "source_page": "p.18",
+            "confidentiality": "一般",
+            "tags": [
+                "送料",
+                "配送料",
+                "無料"
+            ],
+            "required_info": [],
+            "workflow_ids": [
+                "product_inquiry"
+            ],
+            "step_phase": "conditions",
+            "priority_in_workflow": 4,
+            "conflict_group": "shipping_fee_2026"
+        },
+        {
+            "id": "FAQ-025",
+            "title": "修理の受付と費用",
+            "question": "商品の修理はできますか？費用はいくらかかりますか？",
+            "answer": "修理受付の概要：\n・保証期間内（購入から1年）：無償修理\n・保証期間外：有償修理（見積もり提示後にご判断いただきます）\n有償修理の目安費用は商品カテゴリーにより異なるため、修理受付後に見積もりをご提示します（見積もりは無料）\n修理期間：お預かりから2〜4週間\n修理が不可能な場合または費用が高額な場合は交換をご提案します",
+            "category": "返品・交換",
+            "product": "電化製品",
+            "channel": [
+                "電話",
+                "チャット"
+            ],
+            "valid_from": "2026-01-01",
+            "valid_until": null,
+            "version": "2",
+            "source_file": "業務マニュアル第5章",
+            "source_page": "p.35",
+            "confidentiality": "一般",
+            "tags": [
+                "修理",
+                "費用",
+                "保証",
+                "見積もり"
+            ],
+            "required_info": [
+                "商品名",
+                "購入日",
+                "不具合内容"
+            ],
+            "workflow_ids": [
+                "exchange"
+            ],
+            "step_phase": "overview",
+            "priority_in_workflow": 2,
+            "conflict_group": "repair_service_2026"
+        }
+    ]
+}

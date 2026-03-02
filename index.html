@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CC-FAQ | コールセンターFAQシステム</title>
+    <meta name="description" content="コールセンターオペレーター向けチャットボット型FAQシステム">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===================== ログイン画面 ===================== -->
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>💬 CC-FAQ</h1>
+                <p>コールセンター FAQサポートシステム</p>
+            </div>
+            <div class="form-group">
+                <label for="login-role">ロール</label>
+                <select id="login-role">
+                    <option value="operator">オペレーター</option>
+                    <option value="sv">SV（スーパーバイザー）</option>
+                    <option value="admin">管理者</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="login-password">パスワード</label>
+                <input type="password" id="login-password" placeholder="パスワードを入力">
+            </div>
+            <div class="login-error" id="login-error"></div>
+            <button id="btn-login">ログイン</button>
+            <div class="login-hint">
+                デモ用: オペレーター=<code>op1234</code> / SV=<code>sv5678</code> / 管理者=<code>admin9999</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== ローディング画面 ===================== -->
+    <div id="loading-screen" class="screen">
+        <div class="loader-ring"></div>
+        <div style="color:var(--text-secondary);font-size:0.85rem;">データを読み込んでいます...</div>
+    </div>
+
+    <!-- ===================== チャット画面 ===================== -->
+    <div id="chat-screen" class="screen" style="display:none;">
+
+        <header class="app-header">
+            <h1>💬 CC-FAQ</h1>
+
+            <div class="context-selectors" id="context-selectors" style="display:none;">
+                <select id="sel-client" class="ctx-select" title="担当クライアント">
+                    <option value="all">🌐 全クライアント</option>
+                </select>
+                <select id="sel-project" class="ctx-select" title="担当施策" disabled>
+                    <option value="all">📂 全施策・案件</option>
+                </select>
+            </div>
+
+            <div class="header-spacer"></div>
+            <span id="pinned-badge" style="display:none;">📌 業務固定中</span>
+            <button id="btn-unpin" class="btn-header" style="display:none;" title="業務固定を解除">🔓 固定解除</button>
+            <span id="user-badge"></span>
+            <button id="btn-admin" class="btn-header" style="display:none">⚙️ 管理者</button>
+            <button id="btn-logout">🚪 ログアウト</button>
+        </header>
+
+        <!-- チャット本文 -->
+        <div class="chat-body" id="chat-messages"></div>
+
+        <!-- ピン解除バナー（hidden） -->
+        <div id="pin-proposal"></div>
+
+        <!-- 入力エリア -->
+        <div class="chat-input-area">
+            <div class="input-notice">⚠️ 個人情報（電話番号・会員番号・メールアドレス等）は入力しないでください</div>
+            <div id="quick-suggests" class="quick-suggests">
+                <button class="btn-suggest">返品したい</button>
+                <button class="btn-suggest">解約方法は？</button>
+                <button class="btn-suggest">パスワードを忘れた</button>
+                <button class="btn-suggest">引っ越したので住所変更</button>
+            </div>
+            <div class="input-row">
+                <textarea id="chat-input" rows="1" placeholder="質問を入力してください（例：返品期間を教えて / 解約したい）"></textarea>
+                <button id="btn-send" title="送信">➤</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===================== Scripts ===================== -->
+    <!-- FlexSearch CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.43/dist/flexsearch.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dataLoader.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/workflowMatcher.js"></script>
+    <script src="js/policy.js"></script>
+    <script src="js/logger.js"></script>
+    <script src="js/csvExport.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/llmChat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

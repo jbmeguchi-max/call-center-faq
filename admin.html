@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CC-FAQ 管理者ダッシュボード</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-row input,
+        .filter-row select {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .pill-found {
+            background: rgba(45, 212, 160, 0.15);
+            color: var(--success);
+        }
+
+        .pill-notfound {
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--warning);
+        }
+
+        .pill-escalated {
+            background: rgba(240, 90, 90, 0.15);
+            color: var(--danger);
+        }
+
+        .pill-forbidden {
+            background: rgba(124, 106, 247, 0.15);
+            color: var(--accent2);
+        }
+
+        .catalog-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .catalog-card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .catalog-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .catalog-meta span {
+            font-size: 0.77rem;
+            color: var(--text-secondary);
+        }
+
+        .catalog-meta strong {
+            color: var(--text-primary);
+        }
+
+        .faq-answer-preview {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        #faq-search {
+            min-width: 240px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 0.85rem;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+    </style>
+</head>
+
+<body class="admin-layout">
+
+    <header class="admin-header">
+        <h1>⚙️ CC-FAQ 管理者ダッシュボード</h1>
+        <div style="flex:1"></div>
+        <button onclick="location.href='index.html'" class="btn-secondary">← チャットへ戻る</button>
+    </header>
+
+    <!-- タブナビ -->
+    <div class="admin-content">
+        <nav class="admin-tabs">
+            <button class="admin-tab-btn active" data-target="tab-overview">📊 概要</button>
+            <button class="admin-tab-btn" data-target="tab-logs">📋 ログ</button>
+            <button class="admin-tab-btn" data-target="tab-faq" style="display:none;">❓ FAQ一覧</button>
+            <button class="admin-tab-btn" data-target="tab-catalog" style="display:none;">🗄️ データ台帳</button>
+            <button class="admin-tab-btn" data-target="tab-faq-manage">📝 FAQ管理</button>
+            <button class="admin-tab-btn" data-target="tab-llm">🤖 AI自動変換（β）</button>
+        </nav>
+
+        <!-- ===== 概要タブ ===== -->
+        <div id="tab-overview" class="admin-tab-content active">
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-label">総質問数</div>
+                    <div class="stat-value" id="stat-total">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">解決率</div>
+                    <div class="stat-value" id="stat-resolved">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">分からない率</div>
+                    <div class="stat-value" id="stat-notfound">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">エスカレーション数</div>
+                    <div class="stat-value" id="stat-escalated">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">フィードバック（危険）</div>
+                    <div class="stat-value" id="stat-dangerous">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ログ件数</div>
+                    <div class="stat-value" id="stat-logs">-</div>
+                </div>
+            </div>
+
+            <div class="chart-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <div class="stat-card" style="padding: 1.5rem;">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-secondary);">判定結果の割合</h3>
+                    <canvas id="chart-result" height="250"></canvas>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem;">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-secondary);">該当業務ランキング</h3>
+                    <canvas id="chart-workflow" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="section-title">業務別 質問数ランキング</div>
+            <table class="data-table" id="wf-rank-table">
+                <thead>
+                    <tr>
+                        <th>業務</th>
+                        <th>質問数</th>
+                        <th>解決数</th>
+                        <th>解決率</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ===== ログタブ ===== -->
+        <div id="tab-logs" class="admin-tab-content">
+            <div class="actions-bar">
+                <button class="btn-primary" id="btn-download-csv">📥 CSVダウンロード</button>
+                <button class="btn-danger" id="btn-clear-logs">🗑️ ログ削除</button>
+            </div>
+            <div class="filter-row">
+                <input type="text" id="log-search" placeholder="質問で絞り込み">
+                <select id="log-filter-result">
+                    <option value="">すべて</option>
+                    <option value="found">found（解決）</option>
+                    <option value="not_found">not_found（未解決）</option>
+                    <option value="escalated">escalated</option>
+                    <option value="forbidden">forbidden（禁止）</option>
+                </select>
+                <select id="log-filter-feedback">
+                    <option value="">フィードバック全て</option>
+                    <option value="resolved">解決した</option>
+                    <option value="unhelpful">役に立たない</option>
+                    <option value="outdated">情報が古い</option>
+                    <option value="dangerous">言い切り（危険）</option>
+                </select>
+            </div>
+            <table class="data-table" id="log-table">
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>ロール</th>
+                        <th>質問</th>
+                        <th>業務</th>
+                        <th>結果</th>
+                        <th>スコア</th>
+                        <th>FB</th>
+                        <th>エスカレ</th>
+                    </tr>
+                </thead>
+                <tbody id="log-tbody"></tbody>
+            </table>
+        </div>
+
+        <!-- ===== FAQ一覧タブ ===== -->
+        <div id="tab-faq" class="admin-tab-content">
+            <div class="filter-row">
+                <input type="text" id="faq-search" placeholder="タイトル・質問・回答で絞り込み">
+                <select id="faq-filter-category">
+                    <option value="">カテゴリ全て</option>
+                </select>
+                <select id="faq-filter-workflow">
+                    <option value="">業務全て</option>
+                </select>
+            </div>
+            <table class="data-table" id="faq-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>タイトル</th>
+                        <th>カテゴリ</th>
+                        <th>業務</th>
+                        <th>フェーズ</th>
+                        <th>版</th>
+                        <th>有効日</th>
+                        <th>機密</th>
+                    </tr>
+                </thead>
+                <tbody id="faq-tbody"></tbody>
+            </table>
+        </div>
+
+        <!-- ===== データ台帳タブ ===== -->
+        <div id="tab-catalog" class="admin-tab-content">
+            <div id="catalog-list"></div>
+        </div>
+
+        <!-- ===== FAQ管理タブ ===== -->
+        <div id="tab-faq-manage" class="admin-tab-content">
+            <div class="section-title">FAQデータの追加・編集（スプレッドシート運用）</div>
+            <div class="faq-form-container"
+                style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem;">
+
+                <h4 style="margin-top:0; margin-bottom:0.5rem; font-size:0.9rem; color:var(--text-primary);">📝
+                    運用ルールと反映タイミング</h4>
+                <ul
+                    style="margin-bottom:1.5rem; line-height:1.6; color:var(--text-secondary); font-size:0.85rem; padding-left:1.5rem;">
+                    <li><strong>変更方法：</strong> 以下のボタンからスプレッドシートを開き、直接セルを書き換えるか、新しい行を追加してください。シートの「1行目」の項目名（id,
+                        title等）は変更しないでください。</li>
+                    <li><strong>反映タイミング：</strong> スプレッドシート側で入力が完了した瞬間に自動保存されます。その後、こちらのアプリ画面で「最新データを読み込む」ボタンを押すか、<strong
+                            style="color:var(--text-primary);">ブラウザ自体をリロード（再読み込み）した時点</strong>で最新のFAQが反映されます。</li>
+                    <li><strong>対象ユーザー：</strong> 管理者がスプレッドシートを更新後、オペレーター側の画面も「次に画面が読み込まれたタイミング（リロード時）」で新しいFAQに切り替わります。
+                    </li>
+                </ul>
+
+                <div style="display:flex; gap:1rem; align-items:center;">
+                    <a href="https://docs.google.com/spreadsheets/d/1ohexVmYipYE5aAB8z-8PGVPgUz2QGvQ1lZj0vPbcHlE/edit"
+                        target="_blank" class="btn-primary" style="display:inline-block; text-decoration:none;">
+                        📊 Googleスプレッドシートを開く（編集）
+                    </a>
+                    <button class="btn-secondary" onclick="location.reload();">🔄 最新データを読み込む（画面更新）</button>
+                </div>
+            </div>
+
+            <div class="section-title">現在の読み込み状況の確認</div>
+            <div class="faq-form-container"
+                style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem;">
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">
+                    現在システムが認識しているスプレッドシートのFAQデータです。追加した内容がここに表示されていれば正常に反映されています。
+                    （現在： <strong id="loaded-faq-count">0</strong> 件読み込み済み）
+                </p>
+                <div
+                    style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                    <table class="data-table" style="margin: 0; font-size: 0.8rem;">
+                        <thead style="position: sticky; top: 0; background: var(--bg-card2); z-index: 1;">
+                            <tr>
+                                <th>ID</th>
+                                <th>クライアント</th>
+                                <th>施策</th>
+                                <th>タイトル</th>
+                                <th>質問</th>
+                                <th>回答</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loaded-faq-tbody">
+                            <!-- JSで動的に追加 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== AI変換（LLM連携）タブ ===== -->
+        <div id="tab-llm" class="admin-tab-content">
+            <div class="section-title">非構造化ドキュメントのFAQ自動変換ツール</div>
+
+            <div class="filter-row"
+                style="background:var(--bg-card); padding:1rem 1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:1rem; align-items:center;">
+                <label style="font-size:0.8rem; font-weight:bold; margin-right:1rem;">🤖 AIモデル:</label>
+                <select id="llm-provider-select"
+                    style="background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.45rem 0.75rem; color:var(--text-primary); font-size:0.85rem; font-weight:600; min-width:220px;">
+                    <option value="groq">Groq (Llama 3.3 70B) — 高速</option>
+                    <option value="gemini">Gemini 2.0 Flash Lite</option>
+                </select>
+                <span id="api-key-status" style="margin-left:1rem; font-size:0.75rem; color:var(--text-muted);"></span>
+            </div>
+
+            <div class="filter-row"
+                style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); align-items:flex-start;">
+                <div style="flex:1;">
+                    <label style="display:block; font-size:0.8rem; margin-bottom:0.5rem; font-weight:bold;">1.
+                        対象のファイル（Word, Excel, PPT, PDFなど）</label>
+                    <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">
+                        ※マニュアルやルールなどのファイルをここにドラッグ＆ドロップしてください。Geminiによってファイルごと解析されます。</p>
+
+                    <div id="llm-drop-zone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <span class="drop-icon">📄</span>
+                            <p class="drop-text">ここにファイルをドラッグ＆ドロップ<br><span
+                                    style="font-size:0.75rem; font-weight:normal; opacity:0.8;">またはクリックしてファイルを選択</span>
+                            </p>
+                            <input type="file" id="llm-file-input"
+                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.md" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div id="llm-file-info"
+                        style="margin-top:0.75rem; font-size:0.8rem; display:none; align-items:center; gap:0.5rem; background:var(--bg-card2); padding:0.5rem 0.8rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+                        <span id="llm-file-name" style="font-weight:600; color:var(--text-primary);"></span>
+                        <span id="llm-file-status" style="color:var(--text-muted); font-size:0.7rem;">抽出準備完了</span>
+                        <button id="btn-clear-file" class="btn-secondary"
+                            style="margin-left:auto; padding:0.2rem 0.5rem; font-size:0.7rem;">クリア</button>
+                    </div>
+
+                    <!-- フォールバック・確認用のテキストエリア（隠し） -->
+                    <textarea id="llm-source-text" style="display:none;" rows="10"></textarea>
+                </div>
+
+                <div style="min-width:300px; display:flex; flex-direction:column; gap:1rem;">
+                    <div>
+                        <label style="display:block; font-size:0.8rem; margin-bottom:0.5rem; font-weight:bold;">2.
+                            FAQの分類設定（固定）</label>
+                        <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">
+                            ここで指定した値が、全ての生成結果に自動的に付与されます。</p>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label
+                                style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">クライアント名（企業・ブランドなど）</label>
+                            <input type="text" id="llm-client-name" placeholder="例: A社"
+                                style="width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:0.5rem; border-radius:var(--radius-sm); font-size:0.85rem;"
+                                list="llm-client-list">
+                            <datalist id="llm-client-list"></datalist>
+                        </div>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label
+                                style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">施策・案件名</label>
+                            <input type="text" id="llm-project-name" placeholder="例: 春キャンペーン窓口"
+                                style="width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:0.5rem; border-radius:var(--radius-sm); font-size:0.85rem;">
+                        </div>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label
+                                style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">大カテゴリ（任意）</label>
+                            <input type="text" id="llm-category-name" placeholder="例: 返品・キャンセル"
+                                style="width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:0.5rem; border-radius:var(--radius-sm); font-size:0.85rem;">
+                        </div>
+                    </div>
+
+                    <button id="btn-run-llm" class="btn-primary"
+                        style="margin-top:auto; font-weight:bold; padding:0.8rem; justify-content:center; align-items:center; display:flex; gap:0.5rem;">
+                        <span>✨ AIを使ってプレビューを生成</span>
+                    </button>
+                    <div id="llm-status-msg"
+                        style="font-size:0.75rem; color:var(--accent); text-align:center; min-height:1rem;"></div>
+                </div>
+            </div>
+
+            <div class="section-title"
+                style="margin-top:2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <span>変換プレビュー一覧</span>
+                <div style="display:flex; gap:0.5rem;">
+                    <button id="btn-llm-append-sheet" class="btn-primary"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;" disabled>📤 スプレッドシートに自動追加</button>
+                    <button id="btn-llm-export-csv" class="btn-secondary"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;" disabled>📥 CSVエクスポート</button>
+                </div>
+            </div>
+            <p id="llm-sheet-status" style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
+                AIが抽出した質問と回答です。「スプレッドシートに自動追加」を押すと、FAQ管理シートの最終行の次に自動登録されます。</p>
+
+            <table class="data-table" style="font-size:0.8rem;">
+                <thead style="background:var(--bg-card2);">
+                    <tr>
+                        <th>id (自動)</th>
+                        <th>title</th>
+                        <th>question</th>
+                        <th>answer</th>
+                        <th style="width:80px">client</th>
+                        <th style="width:80px">project</th>
+                        <th style="width:80px">category</th>
+                        <th style="width:50px">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="llm-preview-tbody">
+                    <tr>
+                        <td colspan="8" class="empty-state">まだ生成されていません</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script>
+        // pdf.js ワーカーの設定
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        }
+    </script>
+    <script src="js/auth.js"></script>
+    <script src="js/logger.js"></script>
+    <script src="js/csvExport.js"></script>
+    <script src="js/dataLoader.js"></script>
+    <script src="js/llmConverter.js"></script>
+    <script src="js/faqManager.js"></script>
+    <script>
+        /* ===== 管理者認証チェック ===== */
+        (() => {
+            Auth.restore();
+            if (!Auth.canAccessAdmin()) {
+                alert('管理者権限がありません。ログイン画面に戻ります。');
+                location.href = 'index.html';
+            }
+        })();
+
+        /* ===== タブ切り替え ===== */
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+            });
+        });
+
+        function escHtml(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function resultBadge(t) {
+            const map = { found: 'pill-found', not_found: 'pill-notfound', escalated: 'pill-escalated', forbidden: 'pill-forbidden' };
+            const cls = map[t] || '';
+            return `<span class="badge-pill ${cls}">${escHtml(t || '-')}</span>`;
+        }
+
+        /* ===== ログ表示 ===== */
+        function renderLogs(filter = {}) {
+            let logs = Logger.getLogs();
+            if (filter.result) logs = logs.filter(l => l.result_type === filter.result);
+            if (filter.feedback) logs = logs.filter(l => l.feedback === filter.feedback);
+            if (filter.q) {
+                const q = filter.q.toLowerCase();
+                logs = logs.filter(l => (l.user_question || '').toLowerCase().includes(q));
+            }
+
+            const tbody = document.getElementById('log-tbody');
+            tbody.innerHTML = logs.slice().reverse().map(l => `
+        <tr>
+          <td style="white-space:nowrap;font-size:0.75rem">${(l.timestamp || '').slice(0, 19).replace('T', ' ')}</td>
+          <td>${escHtml(l.role)}</td>
+          <td class="truncate" style="max-width:180px;" title="${escHtml(l.user_question)}">${escHtml(l.user_question)}</td>
+          <td>${escHtml((l.workflow_candidates || []).join(', '))}</td>
+          <td>${resultBadge(l.result_type)}</td>
+          <td>${l.top_score ? parseFloat(l.top_score).toFixed(2) : '-'}</td>
+          <td>${escHtml(l.feedback || '-')}</td>
+          <td>${l.escalated ? '⬆️' : ''}</td>
+        </tr>`).join('') || '<tr><td colspan="8" class="empty-state">ログなし</td></tr>';
+
+            // 統計更新
+            const all = Logger.getLogs();
+            document.getElementById('stat-total').textContent = all.length;
+            const resolved = all.filter(l => l.feedback === 'resolved' || l.result_type === 'found').length;
+            document.getElementById('stat-resolved').textContent = all.length ? Math.round(resolved / all.length * 100) + '%' : '-';
+            const notFound = all.filter(l => l.result_type === 'not_found').length;
+            document.getElementById('stat-notfound').textContent = all.length ? Math.round(notFound / all.length * 100) + '%' : '-';
+            document.getElementById('stat-escalated').textContent = all.filter(l => l.escalated).length;
+            document.getElementById('stat-dangerous').textContent = all.filter(l => l.feedback === 'dangerous').length;
+            document.getElementById('stat-logs').textContent = all.length;
+
+            // 業務別ランキング
+            const wfCount = {};
+            const wfResolved = {};
+            all.forEach(l => {
+                const wids = l.workflow_candidates || [];
+                wids.forEach(wid => {
+                    wfCount[wid] = (wfCount[wid] || 0) + 1;
+                    if (l.result_type === 'found') wfResolved[wid] = (wfResolved[wid] || 0) + 1;
+                });
+            });
+            const sorted = Object.entries(wfCount).sort((a, b) => b[1] - a[1]);
+            const wfRankBody = document.querySelector('#wf-rank-table tbody');
+            wfRankBody.innerHTML = sorted.length ? sorted.map(([wid, cnt]) => {
+                const res = wfResolved[wid] || 0;
+                return `<tr><td>${escHtml(wid)}</td><td>${cnt}</td><td>${res}</td><td>${cnt ? Math.round(res / cnt * 100) + '%' : '-'}</td></tr>`;
+            }).join('') : '<tr><td colspan="4" class="empty-state">データなし</td></tr>';
+        }
+
+        // フィルタイベント
+        ['log-search', 'log-filter-result', 'log-filter-feedback'].forEach(id => {
+            const el = document.getElementById(id);
+            const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
+            el.addEventListener(eventType, () => {
+                renderLogs({
+                    q: document.getElementById('log-search').value,
+                    result: document.getElementById('log-filter-result').value,
+                    feedback: document.getElementById('log-filter-feedback').value
+                });
+            });
+        });
+
+        document.getElementById('btn-download-csv').addEventListener('click', () => {
+            CsvExport.download(Logger.getLogs());
+        });
+
+        document.getElementById('btn-clear-logs').addEventListener('click', () => {
+            if (confirm('ログをすべて削除しますか？この操作は取り消せません。')) {
+                Logger.clearLogs();
+                renderLogs();
+            }
+        });
+
+        /* ===== FAQ一覧 ===== */
+        async function loadFAQ() {
+            try {
+                const adminUser = { level: 3 };
+                const data = await DataLoader.loadAll();
+                const records = data.records;
+
+                // カテゴリ・業務プルダウン
+                const cats = [...new Set(records.map(r => r.category).filter(Boolean))].sort();
+                const faqCatSel = document.getElementById('faq-filter-category');
+                cats.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c; opt.textContent = c;
+                    faqCatSel.appendChild(opt);
+                });
+
+                // AIコンバーター用クライアント名サジェスト
+                const optClients = [...new Set(records.map(r => r.client).filter(c => c && c !== '共通'))].sort();
+                const llmClientSel = document.getElementById('llm-client-list');
+                if (llmClientSel) {
+                    llmClientSel.innerHTML = optClients.map(c => `<option value="${escHtml(c)}">`).join('');
+                }
+
+                // FAQ管理タブの現在の読み込み状況テーブルへ描画
+                document.getElementById('loaded-faq-count').textContent = records.length;
+                const loadedFaqTbody = document.getElementById('loaded-faq-tbody');
+                loadedFaqTbody.innerHTML = records.map(r => `
+            <tr>
+              <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
+              <td><span class="badge-pill pill-escalated">${escHtml(r.client || '共通')}</span></td>
+              <td><span class="badge-pill pill-found">${escHtml(r.project || '共通')}</span></td>
+              <td><strong>${escHtml(r.title)}</strong></td>
+              <td class="truncate" style="max-width:180px;" title="${escHtml(r.question)}">${escHtml((r.question || '').slice(0, 40))}...</td>
+              <td class="truncate" style="max-width:200px;" title="${escHtml(r.answer)}">${escHtml((r.answer || '').slice(0, 40))}...</td>
+            </tr>`).join('') || '<tr><td colspan="6" class="empty-state">読み込まれたFAQデータがありません</td></tr>';
+
+                const wfIds = [...new Set(records.flatMap(r => r.workflow_ids || []))].sort();
+                const faqWfSel = document.getElementById('faq-filter-workflow');
+                wfIds.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w; opt.textContent = w;
+                    faqWfSel.appendChild(opt);
+                });
+
+                function renderFAQ() {
+                    const q = document.getElementById('faq-search').value.toLowerCase();
+                    const cat = document.getElementById('faq-filter-category').value;
+                    const wf = document.getElementById('faq-filter-workflow').value;
+                    let filtered = records;
+                    if (q) filtered = filtered.filter(r =>
+                        (r.title || '').toLowerCase().includes(q) ||
+                        (r.question || '').toLowerCase().includes(q) ||
+                        (r.answer || '').toLowerCase().includes(q)
+                    );
+                    if (cat) filtered = filtered.filter(r => r.category === cat);
+                    if (wf) filtered = filtered.filter(r => (r.workflow_ids || []).includes(wf));
+
+                    const tbody = document.getElementById('faq-tbody');
+                    tbody.innerHTML = filtered.map(r => `
+            <tr>
+              <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
+              <td><strong>${escHtml(r.title)}</strong>
+                <div class="faq-answer-preview">${escHtml((r.question || '').slice(0, 60))}...</div>
+              </td>
+              <td>${escHtml(r.category)}</td>
+              <td>${(r.workflow_ids || []).map(w => `<span class="badge-pill pill-found">${escHtml(w)}</span>`).join(' ')}</td>
+              <td>${escHtml(r.step_phase || '-')}</td>
+              <td>v${escHtml(r.version || '-')}</td>
+              <td style="font-size:0.75rem;white-space:nowrap">${escHtml(r.valid_from || '-')}</td>
+              <td><span class="badge-pill ${r.confidentiality === '一般' ? 'pill-found' : 'pill-escalated'}">${escHtml(r.confidentiality || '-')}</span></td>
+            </tr>`).join('') || '<tr><td colspan="8" class="empty-state">該当なし</td></tr>';
+                }
+
+                renderFAQ();
+                ['faq-search', 'faq-filter-category', 'faq-filter-workflow'].forEach(id =>
+                    document.getElementById(id).addEventListener('input', renderFAQ)
+                );
+
+                /* ===== データ台帳 ===== */
+                const catalog = data.catalog;
+                const catList = document.getElementById('catalog-list');
+                catList.innerHTML = catalog.map(c => `
+          <div class="catalog-card">
+            <h3>${escHtml(c.data_name)} <span style="font-size:0.72rem;color:var(--text-muted)">[${escHtml(c.data_id)}]</span></h3>
+            <div class="catalog-meta">
+              <span>形式: <strong>${escHtml(c.format)}</strong></span>
+              <span>保管場所: <strong>${escHtml(c.location)}</strong></span>
+              <span>更新頻度: <strong>${escHtml(c.update_frequency)}</strong></span>
+              <span>責任者: <strong>${escHtml(c.owner)}</strong></span>
+              <span>最終更新: <strong>${escHtml(c.last_updated)}</strong></span>
+              <span>更新者: <strong>${escHtml(c.last_updated_by)}</strong></span>
+              <span>機密区分: <strong>${escHtml(c.confidentiality)}</strong></span>
+              <span>ファイル: <code>${escHtml(c.file)}</code></span>
+            </div>
+            <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--text-secondary)">${escHtml(c.description)}</p>
+          </div>`).join('') || '<div class="empty-state">台帳データなし</div>';
+
+            } catch (e) {
+                console.error('FAQ読み込みエラー:', e);
+            }
+        }
+
+        /* ===== グラフ描画 (Chart.js) ===== */
+        let chartResult, chartWf;
+        function renderCharts() {
+            const logs = Logger.getLogs();
+            if (!logs.length) return;
+
+            // 判定結果の集計
+            const resultCounts = { found: 0, not_found: 0, escalated: 0, forbidden: 0 };
+            logs.forEach(l => { if (resultCounts[l.result_type] !== undefined) resultCounts[l.result_type]++; });
+
+            // 該当業務の集計
+            const wfCounts = {};
+            logs.forEach(l => {
+                if (l.workflow_candidates && l.workflow_candidates.length > 0) {
+                    l.workflow_candidates.forEach(w => { wfCounts[w] = (wfCounts[w] || 0) + 1; });
+                }
+            });
+            const wfSorted = Object.entries(wfCounts).sort((a, b) => b[1] - a[1]).slice(0, 5); // 上位5件
+
+            // Chart.js 共通設定
+            Chart.defaults.color = '#8892b0';
+            Chart.defaults.font.family = "'Inter', 'Noto Sans JP', sans-serif";
+
+            if (chartResult) chartResult.destroy();
+            const ctxResult = document.getElementById('chart-result').getContext('2d');
+            chartResult = new Chart(ctxResult, {
+                type: 'doughnut',
+                data: {
+                    labels: ['回答あり', '見つからない', 'エスカレ', '禁止ワード'],
+                    datasets: [{
+                        data: [resultCounts.found, resultCounts.not_found, resultCounts.escalated, resultCounts.forbidden],
+                        backgroundColor: ['#2dd4a0', '#f5a623', '#f05a5a', '#a0aabf'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            if (chartWf) chartWf.destroy();
+            const ctxWf = document.getElementById('chart-workflow').getContext('2d');
+            chartWf = new Chart(ctxWf, {
+                type: 'bar',
+                data: {
+                    labels: wfSorted.map(w => w[0]),
+                    datasets: [{
+                        label: '該当回数',
+                        data: wfSorted.map(w => w[1]),
+                        backgroundColor: '#4f8ef7',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        // 初期化
+        renderLogs();
+        renderCharts();
+        loadFAQ();
+    </script>
+</body>
+
+</html>
