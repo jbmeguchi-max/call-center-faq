@@ -335,6 +335,22 @@ window.LlmConverter = (() => {
             return;
         }
 
+        if (!clientName) {
+            alert('クライアント名を入力してください。');
+            document.getElementById('llm-client-name').focus();
+            return;
+        }
+        if (!projectName) {
+            alert('施策・案件名を入力してください。');
+            document.getElementById('llm-project-name').focus();
+            return;
+        }
+        if (!categoryName) {
+            alert('大カテゴリを入力してください。');
+            document.getElementById('llm-category-name').focus();
+            return;
+        }
+
         statusMsg.textContent = '生成準備中...';
         statusMsg.style.color = '#4f8ef7';
         btnRun.disabled = true;
@@ -380,7 +396,7 @@ window.LlmConverter = (() => {
             if (!Array.isArray(parsedArr)) throw new Error('AIが想定外の出力をしました。');
 
             generatedFaqs = parsedArr.map((item, idx) => ({
-                id: `faq_ai_${Date.now()}_${idx}`,
+                id: idx + 1,
                 title: String(item.title || '無題'),
                 question: String(item.question || ''),
                 answer: String(item.answer || ''),
@@ -631,10 +647,24 @@ window.LlmConverter = (() => {
 
             if (headers.length === 0) throw new Error('スプレッドシートにヘッダー行がありません。');
 
-            // 2. FAQデータをヘッダー順に変換
-            const rows = generatedFaqs.map(f => {
+            // 2. 既存データからID列の最大値を取得して連番を計算
+            const allDataUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(sheetName + '!A:A')}?key=${SHEETS_API_KEY}`;
+            const allDataRes = await fetch(allDataUrl);
+            let nextId = 1;
+            if (allDataRes.ok) {
+                const allData = await allDataRes.json();
+                const existingIds = (allData.values || []).slice(1) // ヘッダー除外
+                    .map(row => parseInt(row[0], 10))
+                    .filter(n => !isNaN(n));
+                if (existingIds.length > 0) {
+                    nextId = Math.max(...existingIds) + 1;
+                }
+            }
+
+            // 3. FAQデータをヘッダー順に変換（IDを連番で付与）
+            const rows = generatedFaqs.map((f, idx) => {
                 const rowData = {
-                    id: f.id,
+                    id: nextId + idx,
                     client: f.client || '',
                     project: f.project || '',
                     category: f.category || '',
