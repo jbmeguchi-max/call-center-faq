@@ -499,22 +499,13 @@
     <script src="js/auth.js"></script>
     <script src="js/logger.js"></script>
     <script src="js/csvExport.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/security.js"></script>
+    <script>window.Security.init();</script>
     <script src="js/dataLoader.js"></script>
-    <script src="js/llmConverter.js"></script>
     <script src="js/faqManager.js"></script>
+    <script src="js/llmConverter.js"></script>
     <script>
-        /* ===== 旧ドメイン（GitHub Pages）遮断チェック ===== */
-        if (location.hostname === 'jbmeguchi-max.github.io') {
-            document.body.innerHTML = `
-                <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f1117; color:#e8eaf6; font-family:sans-serif; text-align:center; padding:2rem;">
-                    <h1 style="font-size:2rem; margin-bottom:1rem;">⚠️ このURLは現在無効です</h1>
-                    <p style="font-size:1.1rem; color:#9aa3c0; margin-bottom:2rem;">セキュリティおよび機能アップデートのため、本システムはVercel版へ移行しました。</p>
-                    <a href="https://call-center-faq.vercel.app/admin.html" style="padding:1rem 2rem; background:#4f8ef7; color:white; text-decoration:none; border-radius:8px; font-weight:bold;">Vercel版の管理者画面へ移動する</a>
-                </div>
-            `;
-            throw new Error("Access from invalid domain blocked.");
-        }
-
         /* ===== 管理者認証チェック ===== */
         (() => {
             Auth.restore();
@@ -523,6 +514,7 @@
                 location.href = 'index.html';
             }
         })();
+
 
         /* ===== タブ切り替え ===== */
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
@@ -539,7 +531,10 @@
         }
 
         function resultBadge(t) {
-            const map = { found: 'pill-found', not_found: 'pill-notfound', escalated: 'pill-escalated', forbidden: 'pill-forbidden' };
+            const map = {
+                found: 'pill-found', not_found: 'pill-notfound', escalated: 'pill-escalated', forbidden:
+                    'pill-forbidden'
+            };
             const cls = map[t] || '';
             return `<span class="badge-pill ${cls}">${escHtml(t || '-')}</span>`;
         }
@@ -556,24 +551,27 @@
 
             const tbody = document.getElementById('log-tbody');
             tbody.innerHTML = logs.slice().reverse().map(l => `
-        <tr>
-          <td style="white-space:nowrap;font-size:0.75rem">${(l.timestamp || '').slice(0, 19).replace('T', ' ')}</td>
-          <td>${escHtml(l.role)}</td>
-          <td class="truncate" style="max-width:180px;" title="${escHtml(l.user_question)}">${escHtml(l.user_question)}</td>
-          <td>${escHtml((l.workflow_candidates || []).join(', '))}</td>
-          <td>${resultBadge(l.result_type)}</td>
-          <td>${l.top_score ? parseFloat(l.top_score).toFixed(2) : '-'}</td>
-          <td>${escHtml(l.feedback || '-')}</td>
-          <td>${l.escalated ? '⬆️' : ''}</td>
-        </tr>`).join('') || '<tr><td colspan="8" class="empty-state">ログなし</td></tr>';
+    <tr>
+        <td style="white-space:nowrap;font-size:0.75rem">${(l.timestamp || '').slice(0, 19).replace('T', ' ')}</td>
+        <td>${escHtml(l.role)}</td>
+        <td class="truncate" style="max-width:180px;" title="${escHtml(l.user_question)}">${escHtml(l.user_question)}
+        </td>
+        <td>${escHtml((l.workflow_candidates || []).join(', '))}</td>
+        <td>${resultBadge(l.result_type)}</td>
+        <td>${l.top_score ? parseFloat(l.top_score).toFixed(2) : '-'}</td>
+        <td>${escHtml(l.feedback || '-')}</td>
+        <td>${l.escalated ? '⬆️' : ''}</td>
+            </tr>`).join('') || '<tr><td colspan="8" class="empty-state">ログなし</td></tr>';
 
             // 統計更新
             const all = Logger.getLogs();
             document.getElementById('stat-total').textContent = all.length;
             const resolved = all.filter(l => l.feedback === 'resolved' || l.result_type === 'found').length;
-            document.getElementById('stat-resolved').textContent = all.length ? Math.round(resolved / all.length * 100) + '%' : '-';
+            document.getElementById('stat-resolved').textContent = all.length ? Math.round(resolved / all.length * 100) + '%' :
+                '-';
             const notFound = all.filter(l => l.result_type === 'not_found').length;
-            document.getElementById('stat-notfound').textContent = all.length ? Math.round(notFound / all.length * 100) + '%' : '-';
+            document.getElementById('stat-notfound').textContent = all.length ? Math.round(notFound / all.length * 100) + '%' :
+                '-';
             document.getElementById('stat-escalated').textContent = all.filter(l => l.escalated).length;
             document.getElementById('stat-dangerous').textContent = all.filter(l => l.feedback === 'dangerous').length;
             document.getElementById('stat-logs').textContent = all.length;
@@ -592,7 +590,12 @@
             const wfRankBody = document.querySelector('#wf-rank-table tbody');
             wfRankBody.innerHTML = sorted.length ? sorted.map(([wid, cnt]) => {
                 const res = wfResolved[wid] || 0;
-                return `<tr><td>${escHtml(wid)}</td><td>${cnt}</td><td>${res}</td><td>${cnt ? Math.round(res / cnt * 100) + '%' : '-'}</td></tr>`;
+                return `<tr>
+        <td>${escHtml(wid)}</td>
+        <td>${cnt}</td>
+        <td>${res}</td>
+        <td>${cnt ? Math.round(res / cnt * 100) + '%' : '-'}</td>
+    </tr>`;
             }).join('') : '<tr><td colspan="4" class="empty-state">データなし</td></tr>';
         }
 
@@ -647,14 +650,16 @@
                 document.getElementById('loaded-faq-count').textContent = records.length;
                 const loadedFaqTbody = document.getElementById('loaded-faq-tbody');
                 loadedFaqTbody.innerHTML = records.map(r => `
-            <tr>
-              <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
-              <td><span class="badge-pill pill-escalated">${escHtml(r.client || '共通')}</span></td>
-              <td><span class="badge-pill pill-found">${escHtml(r.project || '共通')}</span></td>
-              <td><strong>${escHtml(r.title)}</strong></td>
-              <td class="truncate" style="max-width:180px;" title="${escHtml(r.question)}">${escHtml((r.question || '').slice(0, 40))}...</td>
-              <td class="truncate" style="max-width:200px;" title="${escHtml(r.answer)}">${escHtml((r.answer || '').slice(0, 40))}...</td>
-            </tr>`).join('') || '<tr><td colspan="6" class="empty-state">読み込まれたFAQデータがありません</td></tr>';
+        <tr>
+            <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
+            <td><span class="badge-pill pill-escalated">${escHtml(r.client || '共通')}</span></td>
+            <td><span class="badge-pill pill-found">${escHtml(r.project || '共通')}</span></td>
+            <td><strong>${escHtml(r.title)}</strong></td>
+            <td class="truncate" style="max-width:180px;" title="${escHtml(r.question)}">${escHtml((r.question ||
+                    '').slice(0, 40))}...</td>
+            <td class="truncate" style="max-width:200px;" title="${escHtml(r.answer)}">${escHtml((r.answer ||
+                        '').slice(0, 40))}...</td>
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-state">読み込まれたFAQデータがありません</td></tr>';
 
                 const wfIds = [...new Set(records.flatMap(r => r.workflow_ids || []))].sort();
                 const faqWfSel = document.getElementById('faq-filter-workflow');
@@ -679,18 +684,21 @@
 
                     const tbody = document.getElementById('faq-tbody');
                     tbody.innerHTML = filtered.map(r => `
-            <tr>
-              <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
-              <td><strong>${escHtml(r.title)}</strong>
+        <tr>
+            <td style="font-size:0.72rem;white-space:nowrap">${escHtml(r.id)}</td>
+            <td><strong>${escHtml(r.title)}</strong>
                 <div class="faq-answer-preview">${escHtml((r.question || '').slice(0, 60))}...</div>
-              </td>
-              <td>${escHtml(r.category)}</td>
-              <td>${(r.workflow_ids || []).map(w => `<span class="badge-pill pill-found">${escHtml(w)}</span>`).join(' ')}</td>
-              <td>${escHtml(r.step_phase || '-')}</td>
-              <td>v${escHtml(r.version || '-')}</td>
-              <td style="font-size:0.75rem;white-space:nowrap">${escHtml(r.valid_from || '-')}</td>
-              <td><span class="badge-pill ${r.confidentiality === '一般' ? 'pill-found' : 'pill-escalated'}">${escHtml(r.confidentiality || '-')}</span></td>
-            </tr>`).join('') || '<tr><td colspan="8" class="empty-state">該当なし</td></tr>';
+            </td>
+            <td>${escHtml(r.category)}</td>
+            <td>${(r.workflow_ids || []).map(w => `<span class="badge-pill pill-found">${escHtml(w)}</span>`).join(' ')}
+            </td>
+            <td>${escHtml(r.step_phase || '-')}</td>
+            <td>v${escHtml(r.version || '-')}</td>
+            <td style="font-size:0.75rem;white-space:nowrap">${escHtml(r.valid_from || '-')}</td>
+            <td><span
+                    class="badge-pill ${r.confidentiality === '一般' ? 'pill-found' : 'pill-escalated'}">${escHtml(r.confidentiality
+                        || '-')}</span></td>
+        </tr>`).join('') || '<tr><td colspan="8" class="empty-state">該当なし</td></tr>';
                 }
 
                 renderFAQ();
@@ -702,20 +710,21 @@
                 const catalog = data.catalog;
                 const catList = document.getElementById('catalog-list');
                 catList.innerHTML = catalog.map(c => `
-          <div class="catalog-card">
-            <h3>${escHtml(c.data_name)} <span style="font-size:0.72rem;color:var(--text-muted)">[${escHtml(c.data_id)}]</span></h3>
+        <div class="catalog-card">
+            <h3>${escHtml(c.data_name)} <span
+                    style="font-size:0.72rem;color:var(--text-muted)">[${escHtml(c.data_id)}]</span></h3>
             <div class="catalog-meta">
-              <span>形式: <strong>${escHtml(c.format)}</strong></span>
-              <span>保管場所: <strong>${escHtml(c.location)}</strong></span>
-              <span>更新頻度: <strong>${escHtml(c.update_frequency)}</strong></span>
-              <span>責任者: <strong>${escHtml(c.owner)}</strong></span>
-              <span>最終更新: <strong>${escHtml(c.last_updated)}</strong></span>
-              <span>更新者: <strong>${escHtml(c.last_updated_by)}</strong></span>
-              <span>機密区分: <strong>${escHtml(c.confidentiality)}</strong></span>
-              <span>ファイル: <code>${escHtml(c.file)}</code></span>
+                <span>形式: <strong>${escHtml(c.format)}</strong></span>
+                <span>保管場所: <strong>${escHtml(c.location)}</strong></span>
+                <span>更新頻度: <strong>${escHtml(c.update_frequency)}</strong></span>
+                <span>責任者: <strong>${escHtml(c.owner)}</strong></span>
+                <span>最終更新: <strong>${escHtml(c.last_updated)}</strong></span>
+                <span>更新者: <strong>${escHtml(c.last_updated_by)}</strong></span>
+                <span>機密区分: <strong>${escHtml(c.confidentiality)}</strong></span>
+                <span>ファイル: <code>${escHtml(c.file)}</code></span>
             </div>
             <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--text-secondary)">${escHtml(c.description)}</p>
-          </div>`).join('') || '<div class="empty-state">台帳データなし</div>';
+        </div>`).join('') || '<div class="empty-state">台帳データなし</div>';
 
             } catch (e) {
                 console.error('FAQ読み込みエラー:', e);
@@ -816,7 +825,7 @@
             const ipErrorMsg = document.getElementById('ip-error-msg');
             const ipListContainer = document.getElementById('allowed-ip-list');
 
-            let allowedIPs = JSON.parse(localStorage.getItem('ccfaq_allowed_ips') || '[]');
+            let allowedIPs = window.Security.getAllowedIps();
             let currentIP = '';
 
             async function fetchIP() {
@@ -826,7 +835,6 @@
                     currentIP = data.ip;
                     if (currentIpDisplay) currentIpDisplay.textContent = currentIP;
                     updateUI();
-                    checkAccess();
                 } catch (e) {
                     if (currentIpDisplay) currentIpDisplay.textContent = '取得失敗';
                 }
@@ -835,11 +843,11 @@
             function updateUI() {
                 if (!ipListContainer) return;
                 ipListContainer.innerHTML = allowedIPs.map(ip => `
-                    <div class="tag">
-                        <span>${ip}</span>
-                        <span class="tag-remove" data-ip="${ip}">×</span>
-                    </div>
-                `).join('') || '<div style="font-size:0.8rem; color:var(--text-muted);">許可IPは未登録です（制限なし）</div>';
+        <div class="tag">
+            <span>${ip}</span>
+            <span class="tag-remove" data-ip="${ip}">×</span>
+        </div>
+        `).join('') || '<div style="font-size:0.8rem; color:var(--text-muted);">許可IPは未登録です（制限なし）</div>';
 
                 document.querySelectorAll('.tag-remove').forEach(el => {
                     el.addEventListener('click', () => {
@@ -859,22 +867,8 @@
             }
 
             function save() {
-                localStorage.setItem('ccfaq_allowed_ips', JSON.stringify(allowedIPs));
+                window.Security.saveAllowedIps(allowedIPs);
                 updateUI();
-            }
-
-            function checkAccess() {
-                if (allowedIPs.length > 0 && currentIP && !allowedIPs.includes(currentIP)) {
-                    // アクセス遮断
-                    document.body.innerHTML = `
-                        <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f1117; color:#e8eaf6; font-family:sans-serif; text-align:center; padding:2rem;">
-                            <h1 style="font-size:2rem; margin-bottom:1rem;">🚫 アクセス拒否</h1>
-                            <p style="font-size:1.1rem; color:#9aa3c0; margin-bottom:1rem;">このページの閲覧は許可されたIPアドレスからのみ可能です。</p>
-                            <p style="font-size:0.9rem; color:var(--danger);">現在のIP: ${currentIP}</p>
-                            <button onclick="location.href='index.html'" style="margin-top:2rem; padding:0.8rem 1.5rem; background:var(--bg-card); color:white; border:1px solid var(--border); border-radius:8px; cursor:pointer;">チャット画面へ戻る</button>
-                        </div>
-                    `;
-                }
             }
 
             if (btnAddCurrentIp) {
