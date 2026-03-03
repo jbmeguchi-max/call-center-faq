@@ -1177,3 +1177,34 @@ li {
     font-weight: bold;
     z-index: 11;
 }
+
+/* ---------- IP Restriction Tags ---------- */
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.tag {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.tag-remove {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+    transition: color var(--transition);
+}
+
+.tag-remove:hover {
+    color: var(--danger);
+}
