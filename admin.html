@@ -499,13 +499,14 @@
     <script src="js/auth.js"></script>
     <script src="js/logger.js"></script>
     <script src="js/csvExport.js"></script>
-    <script src="js/auth.js"></script>
     <script src="js/security.js"></script>
-    <script>window.Security.init();</script>
     <script src="js/dataLoader.js"></script>
     <script src="js/faqManager.js"></script>
     <script src="js/llmConverter.js"></script>
     <script>
+        /* ===== 旧ドメイン遮断check ===== */
+        window.Security.initSync();
+
         /* ===== 管理者認証チェック ===== */
         (() => {
             Auth.restore();
@@ -514,7 +515,6 @@
                 location.href = 'index.html';
             }
         })();
-
 
         /* ===== タブ切り替え ===== */
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
@@ -907,6 +907,10 @@
         renderLogs();
         renderCharts();
         loadFAQ();
+
+        // IP制限チェック（非同期・DOMロード後に実行）
+        window.Security.checkIpRestriction();
+
     </script>
 </body>
 
