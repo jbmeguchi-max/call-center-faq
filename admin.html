@@ -171,6 +171,24 @@
                 </div>
             </div>
 
+            <div class="section-title">💡 クイックサジェスト（おすすめ質問）設定</div>
+            <div
+                style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem;">
+                <label
+                    style="display:block; font-size:0.85rem; font-weight:bold; margin-bottom:0.5rem;">表示する文言（カンマ区切り）</label>
+                <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+                    チャット画面の入力欄上部に表示されるボタンのテキストを変更できます。カンマ（,）で区切って入力してください。
+                </p>
+                <div style="display:flex; gap:0.5rem; max-width:800px;">
+                    <input type="text" id="setting-quick-suggests" placeholder="例: 会社概要は？, 商品の種類は？, 支払方法は？, 発信番号は？"
+                        style="flex:1; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:0.6rem; border-radius:var(--radius-sm); font-size:0.85rem;">
+                    <button class="btn-primary" id="btn-save-suggests"
+                        style="padding:0 1.5rem; font-weight:bold;">保存</button>
+                </div>
+                <div id="suggest-save-msg"
+                    style="color:var(--accent); font-size:0.75rem; margin-top:0.5rem; min-height:1rem;"></div>
+            </div>
+
             <div class="section-title">業務別 質問数ランキング</div>
             <table class="data-table" id="wf-rank-table">
                 <thead>
@@ -719,6 +737,31 @@
                 }
             });
         }
+
+        /* ===== クイックサジェスト設定 ===== */
+        (function initQuickSuggestSettings() {
+            const inputEl = document.getElementById('setting-quick-suggests');
+            const btnSave = document.getElementById('btn-save-suggests');
+            const msgEl = document.getElementById('suggest-save-msg');
+
+            if (!inputEl || !btnSave) return;
+
+            // 初期値の読み込み
+            const saved = localStorage.getItem('ccfaq_quick_suggests');
+            if (saved !== null) {
+                inputEl.value = saved;
+            } else {
+                inputEl.value = '会社概要は？, 商品の種類は？, 支払方法は？, 発信番号は？';
+            }
+
+            // 保存処理
+            btnSave.addEventListener('click', () => {
+                const val = inputEl.value;
+                localStorage.setItem('ccfaq_quick_suggests', val);
+                msgEl.textContent = '✅ 保存しました。チャット画面をリロードすると反映されます。';
+                setTimeout(() => { msgEl.textContent = ''; }, 3000);
+            });
+        })();
 
         // 初期化
         renderLogs();

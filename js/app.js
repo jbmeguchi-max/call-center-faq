@@ -87,6 +87,21 @@ window.App = (() => {
         const input = document.getElementById('chat-input');
         const btn = document.getElementById('btn-send');
 
+        // クイックサジェストの動的ロード
+        const suggestsContainer = document.getElementById('quick-suggests');
+        if (suggestsContainer) {
+            const savedSuggests = localStorage.getItem('ccfaq_quick_suggests');
+            let suggestTexts = ['会社概要は？', '商品の種類は？', '支払方法は？', '発信番号は？']; // Default
+            if (savedSuggests !== null) {
+                suggestTexts = savedSuggests.split(',').map(s => s.trim()).filter(Boolean);
+            }
+            if (suggestTexts.length === 0) suggestTexts = ['会社概要は？', '商品の種類は？', '支払方法は？', '発信番号は？'];
+
+            suggestsContainer.innerHTML = suggestTexts.map(text =>
+                `<button class="btn-suggest">${escapeHtml(text)}</button>`
+            ).join('');
+        }
+
         btn.addEventListener('click', () => sendQuery(input.value.trim(), user));
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuery(input.value.trim(), user); }
