@@ -96,11 +96,34 @@ window.Security = (() => {
 
             if (!allowedIPs.includes(currentIP)) {
                 document.body.innerHTML = `
-                    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f1117; color:#e8eaf6; font-family:sans-serif; text-align:center; padding:2rem;">
-                        <h1 style="font-size:2rem; margin-bottom:1rem;">🚫 アクセス拒否</h1>
-                        <p style="font-size:1.1rem; color:#9aa3c0; margin-bottom:1rem;">このページの閲覧は許可されたIPアドレスからのみ可能です。</p>
-                        <p style="font-size:0.9rem; color:#f05a5a;">現在のIP: ${currentIP}</p>
-                        <button onclick="location.href='index.html'" style="margin-top:2rem; padding:0.8rem 1.5rem; background:#1e243a; color:white; border:1px solid #2d3a5a; border-radius:8px; cursor:pointer;">チャット画面へ戻る</button>
+                    <div style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f1117; color:#e8eaf6; font-family:'Noto Sans JP',sans-serif; text-align:center; padding:2rem;">
+                        <div style="max-width:480px; width:100%;">
+                            <div style="font-size:4rem; margin-bottom:1rem; line-height:1;">🚫</div>
+                            <h1 style="font-size:1.6rem; font-weight:700; margin-bottom:0.5rem; color:#f05a5a;">アクセスが拒否されました</h1>
+                            <p style="font-size:0.9rem; color:#9aa3c0; margin-bottom:2rem; line-height:1.6;">
+                                このページは許可されたIPアドレスからのみアクセス可能です。<br>
+                                管理者に問い合わせてIPアドレスの追加を依頼してください。
+                            </p>
+
+                            <div style="background:#1a2035; border:1px solid #2d3a5a; border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; text-align:left;">
+                                <div style="margin-bottom:0.75rem;">
+                                    <span style="font-size:0.7rem; color:#6b7a99; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">あなたのIPアドレス</span>
+                                    <div style="font-size:1.1rem; font-family:monospace; color:#f05a5a; font-weight:700; margin-top:0.2rem;">${currentIP}</div>
+                                </div>
+                                <div style="border-top:1px solid #2d3a5a; padding-top:0.75rem;">
+                                    <span style="font-size:0.7rem; color:#6b7a99; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">制限ステータス</span>
+                                    <div style="font-size:0.9rem; color:#f5a623; font-weight:700; margin-top:0.2rem;">🔒 IPアドレス制限が有効（${allowedIPs.length}件登録済み）</div>
+                                </div>
+                            </div>
+
+                            <div style="background:rgba(79,142,247,0.08); border:1px solid rgba(79,142,247,0.2); border-radius:8px; padding:0.9rem 1.2rem; margin-bottom:1.5rem; text-align:left; font-size:0.8rem; color:#9aa3c0; line-height:1.7;">
+                                <strong style="color:#e8eaf6;">📋 解除方法</strong><br>
+                                管理者がGoogleスプレッドシートの「IP_Restriction」シートに<br>
+                                上記のIPアドレスを追加してください。
+                            </div>
+
+                            <button onclick="location.href='index.html'" style="padding:0.8rem 2rem; background:#1e243a; color:#e8eaf6; border:1px solid #2d3a5a; border-radius:8px; cursor:pointer; font-size:0.9rem; font-weight:600;">← チャット画面へ戻る</button>
+                        </div>
                     </div>
                 `;
             }

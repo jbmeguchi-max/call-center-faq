@@ -122,6 +122,12 @@
 
     <header class="admin-header">
         <h1>⚙️ CC-FAQ 管理者ダッシュボード</h1>
+        <div id="ip-status-badge"
+            style="display:flex; align-items:center; gap:0.5rem; padding:0.35rem 0.9rem; border-radius:20px; font-size:0.75rem; font-weight:700; background:rgba(79,142,247,0.15); border:1px solid rgba(79,142,247,0.3); color:#9aa3c0; transition:all 0.3s;">
+            <span id="ip-badge-dot"
+                style="width:8px; height:8px; border-radius:50%; background:#9aa3c0; flex-shrink:0;"></span>
+            <span id="ip-badge-text">IP確認中...</span>
+        </div>
         <div style="flex:1"></div>
         <button onclick="location.href='index.html'" class="btn-secondary">← チャットへ戻る</button>
     </header>
@@ -139,6 +145,47 @@
 
         <!-- ===== 概要タブ ===== -->
         <div id="tab-overview" class="admin-tab-content active">
+
+            <!-- ===== IP制限ステータスバナー ===== -->
+            <div id="ip-status-banner"
+                style="display:flex; align-items:center; gap:1.2rem; padding:1rem 1.5rem; border-radius:var(--radius); border:1.5px solid rgba(79,142,247,0.3); background:rgba(79,142,247,0.07); margin-bottom:1.5rem; flex-wrap:wrap;">
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <span
+                        style="font-size:0.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">IPアクセス制限</span>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span id="banner-status-dot"
+                            style="width:10px; height:10px; border-radius:50%; background:#9aa3c0; flex-shrink:0; transition:background 0.4s;"></span>
+                        <span id="banner-status-text"
+                            style="font-size:0.9rem; font-weight:700; color:var(--text-primary);">確認中...</span>
+                    </div>
+                </div>
+                <div style="width:1px; height:36px; background:var(--border); flex-shrink:0;"></div>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <span
+                        style="font-size:0.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">あなたのIP</span>
+                    <code id="banner-current-ip"
+                        style="font-size:0.9rem; font-family:monospace; color:var(--accent); font-weight:700;">取得中...</code>
+                </div>
+                <div style="width:1px; height:36px; background:var(--border); flex-shrink:0;"></div>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <span
+                        style="font-size:0.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">許可IP数</span>
+                    <span id="banner-ip-count"
+                        style="font-size:0.9rem; font-weight:700; color:var(--text-primary);">-</span>
+                </div>
+                <div style="width:1px; height:36px; background:var(--border); flex-shrink:0;"></div>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <span
+                        style="font-size:0.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">あなたのアクセス</span>
+                    <span id="banner-my-status"
+                        style="font-size:0.9rem; font-weight:700; color:var(--text-muted);">確認中...</span>
+                </div>
+                <div style="margin-left:auto;">
+                    <button id="btn-refresh-ip-status" class="btn-secondary"
+                        style="font-size:0.75rem; padding:0.35rem 0.8rem;">🔄 更新</button>
+                </div>
+            </div>
+
             <div class="stat-grid">
                 <div class="stat-card">
                     <div class="stat-label">総質問数</div>
@@ -193,14 +240,21 @@
             <div
                 style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem;">
                 <!-- スプレッドシート管理の説明 -->
-                <div style="background:rgba(79,142,247,0.06); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius-sm); padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6;">
+                <div
+                    style="background:rgba(79,142,247,0.06); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius-sm); padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6;">
                     <strong style="color:var(--text-primary);">📋 IPアドレスの管理方法</strong><br>
-                    スプレッドシートに <code style="background:var(--bg-card2); padding:0.1rem 0.4rem; border-radius:3px;">IP_Restriction</code> という名前のシートを作成し、A列（1行目: ヘッダー「ip」）に許可IPを1行ずつ入力してください。アプリ起動時に自動で読み込まれます。リストが空の場合は全IPからアクセス可能です。
+                    スプレッドシートに <code
+                        style="background:var(--bg-card2); padding:0.1rem 0.4rem; border-radius:3px;">IP_Restriction</code>
+                    という名前のシートを作成し、A列（1行目: ヘッダー「ip」）に許可IPを1行ずつ入力してください。アプリ起動時に自動で読み込まれます。リストが空の場合は全IPからアクセス可能です。
                     <div style="margin-top:0.5rem;">
-                        <a href="https://docs.google.com/spreadsheets/d/1ohexVmYipYE5aAB8z-8PGVPgUz2QGvQ1lZj0vPbcHlE/edit" target="_blank"
-                            class="btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.8rem; display:inline-block; text-decoration:none; margin-right:0.5rem;">📊 スプレッドシートを開く</a>
-                        <button id="btn-sync-sheet-ips" class="btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.8rem;">🔄 シートから同期</button>
-                        <span id="sheet-sync-msg" style="margin-left:0.5rem; font-size:0.75rem; color:var(--accent);"></span>
+                        <a href="https://docs.google.com/spreadsheets/d/1ohexVmYipYE5aAB8z-8PGVPgUz2QGvQ1lZj0vPbcHlE/edit"
+                            target="_blank" class="btn-secondary"
+                            style="font-size:0.75rem; padding:0.3rem 0.8rem; display:inline-block; text-decoration:none; margin-right:0.5rem;">📊
+                            スプレッドシートを開く</a>
+                        <button id="btn-sync-sheet-ips" class="btn-secondary"
+                            style="font-size:0.75rem; padding:0.3rem 0.8rem;">🔄 シートから同期</button>
+                        <span id="sheet-sync-msg"
+                            style="margin-left:0.5rem; font-size:0.75rem; color:var(--accent);"></span>
                     </div>
                 </div>
 
@@ -213,7 +267,8 @@
                     <code id="current-ip-display"
                         style="font-size:0.85rem; font-family:monospace; color:var(--accent);">取得中...</code>
                     <button class="btn-primary" id="btn-add-current-ip"
-                        style="margin-left:auto; font-size:0.75rem; padding:0.2rem 0.6rem; display:none;">＋ このIPを追加</button>
+                        style="margin-left:auto; font-size:0.75rem; padding:0.2rem 0.6rem; display:none;">＋
+                        このIPを追加</button>
                     <span id="current-ip-status"
                         style="margin-left:auto; font-size:0.75rem; color:var(--success); display:none;">✅ 許可済み</span>
                 </div>
@@ -954,6 +1009,87 @@
 
         // IP制限チェック（非同期・DOMロード後に実行）
         window.Security.checkIpRestriction();
+
+        /* ===== IP制限ステータスバナー・ヘッダーバッジ更新 ===== */
+        (async function updateIpStatusUI() {
+            const bannerDot = document.getElementById('banner-status-dot');
+            const bannerText = document.getElementById('banner-status-text');
+            const bannerIp = document.getElementById('banner-current-ip');
+            const bannerCount = document.getElementById('banner-ip-count');
+            const bannerMyStatus = document.getElementById('banner-my-status');
+            const badgeDot = document.getElementById('ip-badge-dot');
+            const badgeText = document.getElementById('ip-badge-text');
+            const badgeEl = document.getElementById('ip-status-badge');
+            const btnRefresh = document.getElementById('btn-refresh-ip-status');
+
+            async function refresh() {
+                // --- 現在のIPを取得 ---
+                let currentIP = '取得失敗';
+                try {
+                    const r = await fetch('https://api.ipify.org?format=json');
+                    currentIP = (await r.json()).ip;
+                } catch (e) { }
+                if (bannerIp) bannerIp.textContent = currentIP;
+
+                // --- スプレッドシートのIPリストを取得 ---
+                const sheetIPs = await window.Security.fetchIpsFromSheet();
+
+                // sheetIPs = null → シートなし, [] → 空, [...] → リストあり
+                const restricted = sheetIPs && sheetIPs.length > 0;
+                const count = sheetIPs ? sheetIPs.length : 0;
+                const myAllowed = !restricted || (sheetIPs && sheetIPs.includes(currentIP));
+
+                if (bannerCount) {
+                    bannerCount.textContent = restricted ? `${count} 件` : '0（制限なし）';
+                }
+
+                if (restricted) {
+                    // 制限あり
+                    if (bannerDot) bannerDot.style.background = '#f5a623';       // オレンジ
+                    if (bannerText) bannerText.textContent = '🔒 制限中';
+                    if (badgeDot) badgeDot.style.background = '#f5a623';
+                    if (badgeText) badgeText.textContent = `🔒 IP制限中 (${count}件)`;
+                    if (badgeEl) {
+                        badgeEl.style.background = 'rgba(245,166,35,0.15)';
+                        badgeEl.style.borderColor = 'rgba(245,166,35,0.4)';
+                        badgeEl.style.color = '#f5a623';
+                    }
+                } else {
+                    // 制限なし
+                    if (bannerDot) bannerDot.style.background = '#9aa3c0';
+                    if (bannerText) bannerText.textContent = '🔓 制限なし';
+                    if (badgeDot) badgeDot.style.background = '#9aa3c0';
+                    if (badgeText) badgeText.textContent = '🔓 制限なし';
+                    if (badgeEl) {
+                        badgeEl.style.background = 'rgba(79,142,247,0.15)';
+                        badgeEl.style.borderColor = 'rgba(79,142,247,0.3)';
+                        badgeEl.style.color = '#9aa3c0';
+                    }
+                }
+
+                // 自分の許可状況
+                if (bannerMyStatus) {
+                    if (!restricted) {
+                        bannerMyStatus.textContent = '✅ 全員許可';
+                        bannerMyStatus.style.color = 'var(--success)';
+                    } else if (myAllowed) {
+                        bannerMyStatus.textContent = '✅ 許可済み';
+                        bannerMyStatus.style.color = 'var(--success)';
+                        // 緑に変える
+                        if (bannerDot) bannerDot.style.background = '#2dd4a0';
+                    } else {
+                        bannerMyStatus.textContent = '🚫 拒否（要追加）';
+                        bannerMyStatus.style.color = 'var(--danger)';
+                        if (bannerDot) bannerDot.style.background = '#f05a5a';
+                    }
+                }
+            }
+
+            if (btnRefresh) {
+                btnRefresh.addEventListener('click', refresh);
+            }
+            refresh();
+        })();
 
     </script>
 </body>
