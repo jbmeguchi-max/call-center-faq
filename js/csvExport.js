@@ -3,7 +3,7 @@
  */
 window.CsvExport = (() => {
     const COLUMNS = [
-        'session_id', 'timestamp', 'role', 'user_question',
+        'session_id', 'timestamp', 'role', 'ip_address', 'user_question',
         'workflow_candidates', 'selected_workflow', 'hit_docs',
         'result_type', 'top_score', 'resolved', 'feedback', 'escalated', 'needs_review'
     ];

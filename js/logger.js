@@ -1,5 +1,6 @@
 /**
  * logger.js - LocalStorageロギング・個人情報マスキング・業務候補記録
+ * 各ログエントリにIPアドレスを自動記録
  */
 window.Logger = (() => {
     const STORAGE_KEY = 'cc_faq_logs';
@@ -12,6 +13,34 @@ window.Logger = (() => {
         { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, mask: '[メールアドレス]' },
         { pattern: /\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/g, mask: '[カード番号]' }
     ];
+
+    // IPアドレスキャッシュ（Security.getCurrentIp()の結果を保持）
+    let _cachedIp = '';
+
+    /**
+     * 起動時にIPアドレスを取得してキャッシュ
+     * Security.getCurrentIp()が利用可能であればそちらを使用
+     */
+    async function _initIp() {
+        try {
+            if (window.Security && typeof window.Security.getCurrentIp === 'function') {
+                _cachedIp = await window.Security.getCurrentIp();
+            } else {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                _cachedIp = data.ip || '';
+            }
+        } catch (e) {
+            console.warn('Logger: IP取得失敗:', e);
+            _cachedIp = '';
+        }
+    }
+    // DOMロード後にIP初期化
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _initIp);
+    } else {
+        _initIp();
+    }
 
     function maskPII(text) {
         let result = text || '';
@@ -33,6 +62,7 @@ window.Logger = (() => {
             session_id: sessionId,
             timestamp: new Date().toISOString(),
             role: entry.role || 'unknown',
+            ip_address: _cachedIp || '',
             user_question: maskPII(entry.userQuestion || ''),
             workflow_candidates: entry.workflowCandidates || [],
             selected_workflow: entry.selectedWorkflow || null,

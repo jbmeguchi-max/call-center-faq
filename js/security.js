@@ -17,6 +17,10 @@ window.Security = (() => {
     const API_KEY = 'AIzaSyBHDYguaml7GIz_8TpGkaO1waymmvGyk-U';
     const IP_SHEET_NAME = 'IP_Restriction';
 
+    // IPアドレスキャッシュ（重複fetch防止）
+    let _cachedIp = null;
+    let _ipFetchPromise = null;
+
     /**
      * index.htmlからの互換性用エントリーポイント
      * isMainApp: true の場合はチャット画面向け（IP制限チェックのみ）
@@ -46,11 +50,36 @@ window.Security = (() => {
     /**
      * スプレッドシートのIP_RestrictionシートからIPリストを取得
      */
+    /**
+     * 現在のIPアドレスを取得（キャッシュ付き・重複fetch防止）
+     * @returns {Promise<string>} IPアドレス文字列。取得失敗時は空文字
+     */
+    async function getCurrentIp() {
+        if (_cachedIp) return _cachedIp;
+        if (_ipFetchPromise) return _ipFetchPromise;
+        _ipFetchPromise = (async () => {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                _cachedIp = data.ip || '';
+            } catch (e) {
+                console.warn('IPアドレスの取得に失敗:', e);
+                _cachedIp = '';
+            }
+            _ipFetchPromise = null;
+            return _cachedIp;
+        })();
+        return _ipFetchPromise;
+    }
+
     async function fetchIpsFromSheet() {
         try {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(IP_SHEET_NAME)}?key=${API_KEY}`;
             const res = await fetch(url, { cache: 'no-store' });
-            if (!res.ok) return null; // シートが存在しない場合はnullを返す
+            if (!res.ok) {
+                console.warn(`IP_Restrictionシート取得: HTTP ${res.status} ${res.statusText}`);
+                return null;
+            }
 
             const data = await res.json();
             if (!data.values || data.values.length <= 1) return []; // ヘッダーのみ or 空
@@ -90,9 +119,7 @@ window.Security = (() => {
         if (allowedIPs.length === 0) return; // 制限なし
 
         try {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            const currentIP = data.ip;
+            const currentIP = await getCurrentIp();
 
             if (!allowedIPs.includes(currentIP)) {
                 document.body.innerHTML = `
@@ -151,5 +178,5 @@ window.Security = (() => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(ips));
     }
 
-    return { init, initSync, checkIpRestriction, getAllowedIps, saveAllowedIps, fetchIpsFromSheet };
+    return { init, initSync, checkIpRestriction, getAllowedIps, saveAllowedIps, fetchIpsFromSheet, getCurrentIp };
 })();

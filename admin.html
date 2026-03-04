@@ -326,6 +326,7 @@
             <table class="data-table" id="log-table">
                 <thead>
                     <tr>
+                        <th>IP</th>
                         <th>日時</th>
                         <th>ロール</th>
                         <th>質問</th>
@@ -618,6 +619,7 @@
             const tbody = document.getElementById('log-tbody');
             tbody.innerHTML = logs.slice().reverse().map(l => `
     <tr>
+        <td style="font-size:0.7rem;font-family:monospace;color:var(--accent);white-space:nowrap" title="${escHtml(l.ip_address || '')}">🌐 ${escHtml(l.ip_address || '-')}</td>
         <td style="white-space:nowrap;font-size:0.75rem">${(l.timestamp || '').slice(0, 19).replace('T', ' ')}</td>
         <td>${escHtml(l.role)}</td>
         <td class="truncate" style="max-width:180px;" title="${escHtml(l.user_question)}">${escHtml(l.user_question)}
@@ -627,7 +629,7 @@
         <td>${l.top_score ? parseFloat(l.top_score).toFixed(2) : '-'}</td>
         <td>${escHtml(l.feedback || '-')}</td>
         <td>${l.escalated ? '⬆️' : ''}</td>
-            </tr>`).join('') || '<tr><td colspan="8" class="empty-state">ログなし</td></tr>';
+            </tr>`).join('') || '<tr><td colspan="9" class="empty-state">ログなし</td></tr>';
 
             // 統計更新
             const all = Logger.getLogs();
@@ -900,10 +902,8 @@
 
             async function fetchIP() {
                 try {
-                    const res = await fetch('https://api.ipify.org?format=json');
-                    const data = await res.json();
-                    currentIP = data.ip;
-                    if (currentIpDisplay) currentIpDisplay.textContent = currentIP;
+                    currentIP = await window.Security.getCurrentIp();
+                    if (currentIpDisplay) currentIpDisplay.textContent = currentIP || '取得失敗';
                     updateUI();
                 } catch (e) {
                     if (currentIpDisplay) currentIpDisplay.textContent = '取得失敗';
@@ -1026,8 +1026,7 @@
                 // --- 現在のIPを取得 ---
                 let currentIP = '取得失敗';
                 try {
-                    const r = await fetch('https://api.ipify.org?format=json');
-                    currentIP = (await r.json()).ip;
+                    currentIP = await window.Security.getCurrentIp() || '取得失敗';
                 } catch (e) { }
                 if (bannerIp) bannerIp.textContent = currentIP;
 
