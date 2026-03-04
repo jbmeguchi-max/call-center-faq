@@ -192,8 +192,20 @@
             <div class="section-title">🌐 管理者IPアドレス制限</div>
             <div
                 style="background:var(--bg-card); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom:2rem;">
-                <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">
-                    管理者画面へのアクセスを許可するIPアドレスを登録します。リストが空の場合は制限なし（全員アクセス可）です。
+                <!-- スプレッドシート管理の説明 -->
+                <div style="background:rgba(79,142,247,0.06); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius-sm); padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6;">
+                    <strong style="color:var(--text-primary);">📋 IPアドレスの管理方法</strong><br>
+                    スプレッドシートに <code style="background:var(--bg-card2); padding:0.1rem 0.4rem; border-radius:3px;">IP_Restriction</code> という名前のシートを作成し、A列（1行目: ヘッダー「ip」）に許可IPを1行ずつ入力してください。アプリ起動時に自動で読み込まれます。リストが空の場合は全IPからアクセス可能です。
+                    <div style="margin-top:0.5rem;">
+                        <a href="https://docs.google.com/spreadsheets/d/1ohexVmYipYE5aAB8z-8PGVPgUz2QGvQ1lZj0vPbcHlE/edit" target="_blank"
+                            class="btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.8rem; display:inline-block; text-decoration:none; margin-right:0.5rem;">📊 スプレッドシートを開く</a>
+                        <button id="btn-sync-sheet-ips" class="btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.8rem;">🔄 シートから同期</button>
+                        <span id="sheet-sync-msg" style="margin-left:0.5rem; font-size:0.75rem; color:var(--accent);"></span>
+                    </div>
+                </div>
+
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+                    現在許可されているIPアドレス一覧（シート未設定の場合はこの画面で追加できます）
                 </p>
                 <div
                     style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; padding:0.6rem 1rem; background:rgba(79, 142, 247, 0.08); border-radius:var(--radius-sm); border:1px solid rgba(79, 142, 247, 0.2);">
@@ -201,13 +213,12 @@
                     <code id="current-ip-display"
                         style="font-size:0.85rem; font-family:monospace; color:var(--accent);">取得中...</code>
                     <button class="btn-primary" id="btn-add-current-ip"
-                        style="margin-left:auto; font-size:0.75rem; padding:0.2rem 0.6rem; display:none;">＋
-                        このIPを追加</button>
+                        style="margin-left:auto; font-size:0.75rem; padding:0.2rem 0.6rem; display:none;">＋ このIPを追加</button>
                     <span id="current-ip-status"
                         style="margin-left:auto; font-size:0.75rem; color:var(--success); display:none;">✅ 許可済み</span>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
-                    <input type="text" id="setting-new-ip" placeholder="例: 192.168.1.1"
+                    <input type="text" id="setting-new-ip" placeholder="例: 203.0.113.1"
                         style="flex:1; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:0.6rem; border-radius:var(--radius-sm); font-size:0.85rem;">
                     <button class="btn-primary" id="btn-add-ip" style="padding:0 1.2rem; font-weight:bold;">追加</button>
                 </div>
@@ -572,8 +583,10 @@
             const notFound = all.filter(l => l.result_type === 'not_found').length;
             document.getElementById('stat-notfound').textContent = all.length ? Math.round(notFound / all.length * 100) + '%' :
                 '-';
-            document.getElementById('stat-escalated').textContent = all.filter(l => l.escalated).length;
-            document.getElementById('stat-dangerous').textContent = all.filter(l => l.feedback === 'dangerous').length;
+            const statEscalated = document.getElementById('stat-escalated');
+            const statDangerous = document.getElementById('stat-dangerous');
+            if (statEscalated) statEscalated.textContent = all.filter(l => l.escalated).length;
+            if (statDangerous) statDangerous.textContent = all.filter(l => l.feedback === 'dangerous').length;
             document.getElementById('stat-logs').textContent = all.length;
 
             // 業務別ランキング
@@ -824,6 +837,8 @@
             const btnAddIp = document.getElementById('btn-add-ip');
             const ipErrorMsg = document.getElementById('ip-error-msg');
             const ipListContainer = document.getElementById('allowed-ip-list');
+            const btnSyncSheet = document.getElementById('btn-sync-sheet-ips');
+            const sheetSyncMsg = document.getElementById('sheet-sync-msg');
 
             let allowedIPs = window.Security.getAllowedIps();
             let currentIP = '';
@@ -837,6 +852,29 @@
                     updateUI();
                 } catch (e) {
                     if (currentIpDisplay) currentIpDisplay.textContent = '取得失敗';
+                }
+            }
+
+            // スプレッドシートからIPを同期
+            async function syncFromSheet() {
+                if (sheetSyncMsg) sheetSyncMsg.textContent = '同期中...';
+                try {
+                    const sheetIPs = await window.Security.fetchIpsFromSheet();
+                    if (sheetIPs === null) {
+                        if (sheetSyncMsg) sheetSyncMsg.textContent = '⚠️ IP_Restrictionシートが見つかりません';
+                        return;
+                    }
+                    allowedIPs = sheetIPs;
+                    window.Security.saveAllowedIps(allowedIPs);
+                    updateUI();
+                    if (sheetSyncMsg) {
+                        sheetSyncMsg.textContent = sheetIPs.length > 0
+                            ? `✅ シートから ${sheetIPs.length} 件のIPを読み込みました`
+                            : '✅ シートに登録なし（制限なし）';
+                        setTimeout(() => { if (sheetSyncMsg) sheetSyncMsg.textContent = ''; }, 4000);
+                    }
+                } catch (e) {
+                    if (sheetSyncMsg) sheetSyncMsg.textContent = '❌ 同期失敗';
                 }
             }
 
@@ -871,6 +909,10 @@
                 updateUI();
             }
 
+            if (btnSyncSheet) {
+                btnSyncSheet.addEventListener('click', syncFromSheet);
+            }
+
             if (btnAddCurrentIp) {
                 btnAddCurrentIp.addEventListener('click', () => {
                     if (currentIP && !allowedIPs.includes(currentIP)) {
@@ -900,7 +942,9 @@
                 });
             }
 
+            // 初期化: まずシートから同期を試みる
             fetchIP();
+            syncFromSheet();
         })();
 
         // 初期化
